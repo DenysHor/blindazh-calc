@@ -688,9 +688,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Виконавець (посада, звання, ПІБ)</label>
+              <label>Виконавець (для заповнення вручну або друку)</label>
               <div class="input-wrapper">
-                <input type="text" id="project_author" value="Старший лейтенант Горстка Д.В." oninput="updateProjectMeta()">
+                <input type="text" id="project_author" value="" placeholder="Залиште порожнім для заповнення вручну" oninput="updateProjectMeta()">
               </div>
             </div>
           </div>
@@ -1453,17 +1453,17 @@
 
       <!-- Section 4: Sign-off block -->
       <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid #cbd5e1; page-break-inside: avoid;">
-        <table style="width: 100%; font-size: 8.5pt; color: #0f172a;">
+        <table style="width: 100%; font-size: 8.5pt; color: #0f172a; border-collapse: collapse;">
           <tr>
-            <td style="width: 50%; vertical-align: top;">
-              <b>Розрахунок склав:</b><br>
-              Командир інженерно-позиційного взводу ІСР<br>
-              старший лейтенант ___________ <span id="pdf_sign_author">Д. В. ГОРСТКА</span>
+            <td style="width: 50%; vertical-align: top; padding-right: 20px;">
+              <b>Розрахунок склав:</b><br><br>
+              <span id="pdf_sign_author">____________________________________________</span><br>
+              <div style="font-size: 7.5pt; color: #64748b; margin-top: 3px;">(посада, військове звання, підпис, ініціали та прізвище)</div>
             </td>
-            <td style="width: 50%; vertical-align: top; text-align: right;">
-              <b>Перевірив:</b><br>
-              Головний сержант ІСР 475 ОШП<br>
-              сержант ___________ Ю. О. САТІРОВ
+            <td style="width: 50%; vertical-align: top; padding-left: 20px;">
+              <b>Перевірив:</b><br><br>
+              ____________________________________________<br>
+              <div style="font-size: 7.5pt; color: #64748b; margin-top: 3px;">(посада, військове звання, підпис, ініціали та прізвище)</div>
             </td>
           </tr>
         </table>
@@ -2554,6 +2554,13 @@
         text += `• ${it.name} (${it.cat}): ${it.qty} ${it.unit} [${it.vol}] — ${it.spec.replace(/<[^>]*>?/gm, '')}\n`;
       });
     }
+    
+    text += `\n---------------------------------------------------------------\n`;
+    text += `ПІДПИСИ ПОСАДОВИХ ОСІБ:\n`;
+    text += `Розрахунок склав: ____________________________________________\n`;
+    text += `                 (посада, військове звання, підпис, ініціали та прізвище)\n\n`;
+    text += `Перевірив:        ____________________________________________\n`;
+    text += `                 (посада, військове звання, підпис, ініціали та прізвище)\n`;
     text += `===============================================================`;
     document.getElementById('report_content_text').innerText = text;
   }
@@ -2613,13 +2620,13 @@
     const pNum = document.getElementById('project_number') ? document.getElementById('project_number').value : 'ІСР-2026/09-01';
     const pDate = document.getElementById('project_date') ? document.getElementById('project_date').value : new Date().toLocaleDateString('uk-UA');
     const pLoc = document.getElementById('project_location') ? document.getElementById('project_location').value : 'ВОП / Бліндаж';
-    const pAuth = document.getElementById('project_author') ? document.getElementById('project_author').value : 'Горстка Д.В.';
+    const pAuth = document.getElementById('project_author') ? document.getElementById('project_author').value.trim() : '';
 
     // Sync with PDF view
     if (document.getElementById('pdf_doc_num')) document.getElementById('pdf_doc_num').innerText = pNum;
     if (document.getElementById('pdf_doc_date')) document.getElementById('pdf_doc_date').innerText = pDate;
     if (document.getElementById('pdf_doc_location')) document.getElementById('pdf_doc_location').innerText = pLoc;
-    if (document.getElementById('pdf_sign_author')) document.getElementById('pdf_sign_author').innerText = pAuth;
+    if (document.getElementById('pdf_sign_author')) document.getElementById('pdf_sign_author').innerText = pAuth ? pAuth : '____________________________________________';
 
     // Sync Logo in PDF
     const logoImg = document.querySelector('.brand img');
@@ -2657,7 +2664,7 @@
     const pNum = document.getElementById('project_number').value.trim() || `ІСР-${Date.now().toString().slice(-4)}`;
     const pDate = document.getElementById('project_date').value || new Date().toISOString().split('T')[0];
     const pLoc = document.getElementById('project_location').value.trim() || 'Позиція';
-    const pAuth = document.getElementById('project_author').value.trim() || 'Командир взводу';
+    const pAuth = document.getElementById('project_author').value.trim();
 
     const projectData = {
       id: 'proj_' + Date.now(),
