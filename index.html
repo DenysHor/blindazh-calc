@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Бліндаж-Калькулятор (FortCalc Pro) — Інженерний розрахунок укриттів</title>
-  <meta name="description" content="Автономний інженерний калькулятор розрахунку котлованів, навантажень, силової схеми та матеріалів (BOM) польових фортифікаційних споруд та бліндажів">
+  <title>Бліндаж-Калькулятор (FortCalc Pro) — Інженерний розрахунок укриттів за СВП 3-00(51)238</title>
+  <meta name="description" content="Автономний польовий інженерний калькулятор бліндажів: техніка JCB/Case/ПЗМ-2, розрахунок кубатури кругляка, необрізної та обрізної дошки, технологічна карта за етапами згідно з методичкою ЗСУ СВП 3-00(51)238">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121814">
   <style>
     :root {
-      --bg-primary: #121814;
-      --bg-card: #1b241e;
-      --bg-input: #232f28;
-      --border-color: #314437;
+      --bg-primary: #101612;
+      --bg-card: #17211a;
+      --bg-input: #1f2c23;
+      --border-color: #2d3f33;
       --text-main: #e2e8e4;
-      --text-muted: #95a59a;
+      --text-muted: #94a398;
       --accent: #4ade80;
       --accent-hover: #22c55e;
       --accent-bg: rgba(74, 222, 128, 0.12);
@@ -21,28 +23,16 @@
       --danger: #ef4444;
       --danger-bg: rgba(239, 68, 68, 0.15);
       --info: #38bdf8;
-      --wood: #b45309;
-      --soil: #78350f;
+      --info-bg: rgba(56, 189, 248, 0.12);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      line-height: 1.5;
-      padding-bottom: 60px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    body { background-color: var(--bg-primary); color: var(--text-main); line-height: 1.5; padding-bottom: 60px; }
 
     header {
-      background: linear-gradient(180deg, #18231c 0%, #121814 100%);
+      background: linear-gradient(180deg, #18231c 0%, #101612 100%);
       border-bottom: 1px solid var(--border-color);
-      padding: 18px 20px;
+      padding: 16px 20px;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -58,411 +48,213 @@
       gap: 15px;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
-      width: 40px;
-      height: 40px;
+      width: 42px; height: 42px;
       background: var(--accent-bg);
       border: 1px solid var(--accent);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
     }
-
-    .brand-text h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .brand-text h1 { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
     .badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: var(--accent-bg);
-      color: var(--accent);
+      font-size: 0.7rem; font-weight: 600;
+      background: var(--accent-bg); color: var(--accent);
       border: 1px solid var(--accent);
-      padding: 2px 8px;
-      border-radius: 999px;
+      padding: 2px 8px; border-radius: 999px;
     }
+    .brand-text p { font-size: 0.8rem; color: var(--text-muted); }
 
-    .brand-text p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .presets-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .presets-bar { display: flex; flex-wrap: wrap; gap: 8px; }
     .btn-preset {
-      background: var(--bg-input);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: var(--bg-input); border: 1px solid var(--border-color);
+      color: var(--text-main); padding: 6px 12px; border-radius: 6px;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
     }
-
     .btn-preset:hover, .btn-preset.active {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-      color: #fff;
+      border-color: var(--accent); background: var(--accent-bg); color: #fff;
     }
 
-    .main-container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 16px;
-    }
+    .main-container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
 
     /* Tabs Navigation */
     .tabs-nav {
-      display: flex;
-      overflow-x: auto;
-      gap: 6px;
+      display: flex; overflow-x: auto; gap: 6px;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-      margin-bottom: 20px;
+      padding-bottom: 8px; margin-bottom: 20px;
       scrollbar-width: thin;
     }
-
     .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-      transition: all 0.2s;
+      background: transparent; border: none; color: var(--text-muted);
+      padding: 10px 16px; border-radius: 8px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      white-space: nowrap; transition: all 0.2s;
     }
+    .tab-btn:hover { color: var(--text-main); background: var(--bg-card); }
+    .tab-btn.active { color: var(--accent); background: var(--accent-bg); border: 1px solid var(--border-color); }
 
-    .tab-btn:hover {
-      color: var(--text-main);
-      background: var(--bg-card);
-    }
-
-    .tab-btn.active {
-      color: var(--accent);
-      background: var(--accent-bg);
-      border: 1px solid var(--border-color);
-    }
-
-    /* Grid Layout */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.3fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 900px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    /* Layout */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px; }
+    @media (max-width: 920px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
     .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 20px; margin-bottom: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
-
     .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px;
     }
+    .card-header h2 { font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
 
-    .card-header h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .input-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .form-group label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
+    .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
     .input-wrapper {
-      display: flex;
-      align-items: center;
-      background: var(--bg-input);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 0 10px;
+      display: flex; align-items: center; background: var(--bg-input);
+      border: 1px solid var(--border-color); border-radius: 6px; padding: 0 10px;
       transition: border-color 0.2s;
     }
-
-    .input-wrapper:focus-within {
-      border-color: var(--accent);
-    }
-
+    .input-wrapper:focus-within { border-color: var(--accent); }
     .input-wrapper input, .input-wrapper select {
-      background: transparent;
-      border: none;
-      color: #fff;
-      padding: 8px 4px;
-      font-size: 0.95rem;
-      width: 100%;
-      outline: none;
+      background: transparent; border: none; color: #fff; padding: 8px 4px;
+      font-size: 0.95rem; width: 100%; outline: none;
     }
+    .input-wrapper select option { background: var(--bg-card); color: #fff; }
+    .input-unit { font-size: 0.8rem; color: var(--text-muted); margin-left: 6px; white-space: nowrap; }
 
-    .input-wrapper select option {
-      background: var(--bg-card);
-      color: #fff;
-    }
-
-    .input-unit {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-left: 6px;
-      white-space: nowrap;
-    }
-
-    /* Status and Summary Cards */
-    .metric-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
+    /* Metrics */
+    .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .metric-box {
+      background: var(--bg-input); border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 12px 8px; text-align: center;
+    }
+    .metric-box.highlight { border-color: var(--accent); background: var(--accent-bg); }
+    .metric-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+    .metric-val { font-size: 1.3rem; font-weight: 700; color: #fff; }
+    .metric-val small { font-size: 0.75rem; font-weight: normal; color: var(--text-muted); }
+
+    .alert-banner {
+      padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;
+      font-size: 0.85rem; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .alert-banner.warning { background: var(--warning-bg); border: 1px solid var(--warning); color: #fde68a; }
+    .alert-banner.danger { background: var(--danger-bg); border: 1px solid var(--danger); color: #fca5a5; }
+    .alert-banner.info { background: var(--info-bg); border: 1px solid var(--info); color: #bae6fd; }
+
+    /* Machinery Cards */
+    .machinery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .machine-card {
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 12px;
-      text-align: center;
-    }
-
-    .metric-box.highlight {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-    }
-
-    .metric-box.alert-box {
-      border-color: var(--warning);
-      background: var(--warning-bg);
-    }
-
-    .metric-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .metric-val {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .metric-val small {
-      font-size: 0.8rem;
-      font-weight: normal;
-      color: var(--text-muted);
-      margin-left: 2px;
-    }
-
-    /* Notification Banner */
-    .alert-banner {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 0.85rem;
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .alert-banner.warning {
-      background: var(--warning-bg);
-      border: 1px solid var(--warning);
-      color: #fde68a;
-    }
-
-    .alert-banner.danger {
-      background: var(--danger-bg);
-      border: 1px solid var(--danger);
-      color: #fca5a5;
-    }
-
-    .alert-banner.info {
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid var(--info);
-      color: #bae6fd;
-    }
-
-    /* Diagram SVG container */
-    .canvas-container {
-      background: #0d120f;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px;
-      overflow-x: auto;
-      text-align: center;
-      position: relative;
-    }
-
-    svg text {
-      user-select: none;
-    }
-
-    /* Tables */
-    .calc-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      text-align: left;
-    }
-
-    .calc-table th {
-      background: var(--bg-input);
-      color: var(--text-muted);
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border-color);
-      font-weight: 600;
-    }
-
-    .calc-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      color: var(--text-main);
-    }
-
-    .calc-table tr:hover td {
-      background: rgba(255,255,255,0.02);
-    }
-
-    .tag-category {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: rgba(255,255,255,0.08);
-      color: #cbd5e1;
-    }
-
-    .action-btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .btn {
-      background: var(--accent);
-      color: #052e16;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
+      flex-direction: column;
+      justify-content: space-between;
       gap: 8px;
+    }
+    .machine-card.suitable { border-left: 4px solid var(--accent); }
+    .machine-card.warning-limit { border-left: 4px solid var(--warning); }
+    .machine-card.not-suitable { border-left: 4px solid var(--danger); opacity: 0.7; }
+    .machine-header { display: flex; justify-content: space-between; align-items: center; }
+    .machine-title { font-size: 0.9rem; font-weight: 700; color: #fff; }
+    .machine-status {
+      font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+    }
+    .status-ok { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent); }
+    .status-warn { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning); }
+    .status-no { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+    .machine-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Buttons */
+    .btn {
+      background: var(--accent); color: #052e16; border: none;
+      padding: 10px 18px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.2s;
     }
-
-    .btn:hover {
-      background: var(--accent-hover);
+    .btn:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); color: #fff; }
+    .btn-action-banner {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding: 14px;
+      background: rgba(74, 222, 128, 0.06); border: 1px dashed var(--accent); border-radius: 8px;
+      align-items: center; justify-content: space-between;
     }
 
-    .btn-secondary {
-      background: var(--bg-input);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
+    /* Diagram SVG */
+    .canvas-container {
+      background: #0d120f; border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 10px; overflow-x: auto; text-align: center;
     }
+    .layer-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; font-size: 0.75rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-color { width: 14px; height: 14px; border-radius: 3px; }
 
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--accent);
-      color: #fff;
+    /* Tables */
+    .calc-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+    .calc-table th {
+      background: var(--bg-input); color: var(--text-muted); padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color); font-weight: 600;
     }
+    .calc-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-main); }
+    .calc-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .tag-category {
+      display: inline-block; padding: 2px 6px; border-radius: 4px;
+      font-size: 0.7rem; font-weight: 600; background: rgba(255,255,255,0.08); color: #cbd5e1;
+    }
+    .highlight-cell { color: var(--accent); font-weight: 700; }
 
-    /* Report view */
+    /* Algorithm Accordion / Step Block */
+    .step-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 10px; margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .step-header {
+      background: var(--bg-input); padding: 14px 18px; display: flex;
+      align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color);
+    }
+    .step-badge {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+      color: #052e16; font-weight: 700; display: flex; align-items: center;
+      justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .step-title { font-size: 1rem; font-weight: 700; color: #fff; }
+    .step-body { padding: 16px 18px; }
+    .step-section { margin-bottom: 12px; }
+    .step-sec-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--accent); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .step-material-box {
+      background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 10px 14px; margin-bottom: 10px;
+    }
+    .step-material-list { list-style: none; font-size: 0.85rem; }
+    .step-material-list li { margin-bottom: 4px; color: #f1f5f9; }
+    .step-material-list li b { color: var(--accent); }
+    .step-tasks-list { list-style-type: disc; margin-left: 20px; font-size: 0.85rem; color: var(--text-main); }
+    .step-tasks-list li { margin-bottom: 6px; }
+
+    /* Report */
     .report-box {
-      background: #0d120f;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
+      background: #0d120f; border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 16px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.85rem;
-      color: #86efac;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      max-height: 500px;
-      overflow-y: auto;
-    }
-
-    .layer-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 10px;
-      font-size: 0.75rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .legend-color {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
+      font-size: 0.85rem; color: #86efac; white-space: pre-wrap; line-height: 1.6;
+      max-height: 550px; overflow-y: auto;
     }
   </style>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#121814">
-  <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
@@ -471,8 +263,8 @@
     <div class="brand">
       <div class="brand-icon">🛡️</div>
       <div class="brand-text">
-        <h1>Бліндаж-Калькулятор <span class="badge">PRO v2.0</span></h1>
-        <p>Інженерно-фортифікаційний розрахунок укриттів, котлованів та специфікацій</p>
+        <h1>Бліндаж-Калькулятор <span class="badge">ЗСУ СВП 3-00(51)238</span></h1>
+        <p>Інженерно-фортифікаційний розрахунок матеріалів, техніки та алгоритму будівництва</p>
       </div>
     </div>
     <div class="presets-bar">
@@ -486,26 +278,25 @@
 </header>
 
 <div class="main-container">
-  <!-- Tabs Header -->
+  <!-- Tabs Navigation -->
   <div class="tabs-nav">
-    <button class="tab-btn active" onclick="switchTab('tab-excavation')">📐 Котлован та Висоти</button>
-    <button class="tab-btn" onclick="switchTab('tab-structure')">🏗️ Силова схема та Опори</button>
-    <button class="tab-btn" onclick="switchTab('tab-bom')">📋 Матеріали (BOM)</button>
+    <button class="tab-btn active" onclick="switchTab('tab-excavation')">📐 Котлован, Висоти & Схема</button>
+    <button class="tab-btn" onclick="switchTab('tab-machinery')">🚜 Техніка (JCB / Case / ПЗМ)</button>
+    <button class="tab-btn" onclick="switchTab('tab-bom')">📋 Розрахунок матеріалів (BOM)</button>
+    <button class="tab-btn" onclick="switchTab('tab-algorithm')">🔨 Алгоритм за етапами</button>
     <button class="tab-btn" onclick="switchTab('tab-marking')">📏 Розмітка та Укоси</button>
-    <button class="tab-btn" onclick="switchTab('tab-systems')">💧 Водовідведення & Вентиляція</button>
-    <button class="tab-btn" onclick="switchTab('tab-algorithm')">🔨 Алгоритм будівництва</button>
     <button class="tab-btn" onclick="switchTab('tab-recommendations')">💡 Рекомендації та Безпека</button>
     <button class="tab-btn" onclick="switchTab('tab-report')">📄 Зведений звіт</button>
   </div>
 
-  <!-- Tab 1: Excavation & Elevation -->
+  <!-- Tab 1: Excavation & Elevation & Scheme -->
   <div id="tab-excavation" class="tab-pane">
     <div class="dashboard-grid">
       <!-- Input Column -->
       <div>
         <div class="card">
           <div class="card-header">
-            <h2>⚙️ Основні геометричні параметри</h2>
+            <h2>⚙️ Основні геометричні розміри</h2>
           </div>
           <div class="input-grid">
             <div class="form-group">
@@ -523,19 +314,19 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Внутрішня висота приміщення</label>
+              <label>Внутрішня висота приміщення (H)</label>
               <div class="input-wrapper">
                 <input type="number" id="dim_height" value="2.20" step="0.05" min="1.5" max="3.0" oninput="calculateAll()">
                 <span class="input-unit">м</span>
               </div>
             </div>
             <div class="form-group">
-              <label>Тип ґрунту (для стійкості стін)</label>
+              <label>Тип ґрунту (укоси котловану)</label>
               <div class="input-wrapper">
                 <select id="soil_type" onchange="calculateAll()">
-                  <option value="sand">Пісок / Супісок (нестійкий)</option>
-                  <option value="loam" selected>Суглинок / Звичайний ґрунт</option>
-                  <option value="clay">Глина / Щільний ґрунт</option>
+                  <option value="sand">Пісок / Супісок (1:1.0)</option>
+                  <option value="loam" selected>Суглинок (1:0.67)</option>
+                  <option value="clay">Глина щільна (1:0.5)</option>
                 </select>
               </div>
             </div>
@@ -544,7 +335,7 @@
 
         <div class="card">
           <div class="card-header">
-            <h2>🌲 Перекриття та захисний пиріг</h2>
+            <h2>🌲 Перекриття та захисні шари</h2>
           </div>
           <div class="input-grid">
             <div class="form-group">
@@ -552,7 +343,7 @@
               <div class="input-wrapper">
                 <select id="log_layers" onchange="calculateAll()">
                   <option value="1">1 накат колод</option>
-                  <option value="2" selected>2 накати колод (рекомендовано)</option>
+                  <option value="2" selected>2 накати колод (за СВП 3-00(51)238)</option>
                 </select>
               </div>
             </div>
@@ -571,7 +362,7 @@
               </div>
             </div>
             <div class="form-group" id="group_inter_soil">
-              <label>Демпферний шар між накатами</label>
+              <label>Демпферний шар ґрунту</label>
               <div class="input-wrapper">
                 <input type="number" id="inter_soil" value="15" step="5" min="0" max="40" oninput="calculateAll()">
                 <span class="input-unit">см</span>
@@ -582,8 +373,8 @@
               <div class="input-wrapper">
                 <select id="sandbag_layers" onchange="calculateAll()">
                   <option value="0">Без мішків</option>
-                  <option value="1">1 шар мішків (12–15 см)</option>
-                  <option value="2" selected>2 шари з перев'язкою (25–30 см)</option>
+                  <option value="1">1 шар мішків (14 см)</option>
+                  <option value="2" selected>2 шари мішків (26 см, цегляна кладка)</option>
                 </select>
               </div>
             </div>
@@ -603,40 +394,52 @@
           </div>
           <div class="input-grid">
             <div class="form-group">
-              <label>Дренажна підсипка (пісок/гравій)</label>
+              <label>Дренажна підсипка (щебінь/пісок)</label>
               <div class="input-wrapper">
                 <input type="number" id="floor_drain" value="10" step="2" min="5" max="30" oninput="calculateAll()">
                 <span class="input-unit">см</span>
               </div>
             </div>
             <div class="form-group">
-              <label>Піддони (основа підлоги)</label>
+              <label>Піддони під настил</label>
               <div class="input-wrapper">
                 <select id="floor_pallets" onchange="calculateAll()">
-                  <option value="14" selected>Стандартні піддони (14 см)</option>
+                  <option value="14" selected>Піддони стандартні (h = 14 см)</option>
                   <option value="0">Без піддонів (лаги на ґрунт)</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
-              <label>Чистовий настил</label>
+              <label>Матеріал настилу підлоги</label>
               <div class="input-wrapper">
                 <select id="floor_finish" onchange="calculateAll()">
-                  <option value="2" selected>Плити OSB (18–22 мм)</option>
-                  <option value="3">Дошка обрізна (30–40 мм)</option>
+                  <option value="osb" selected>Плити OSB-3 вологостійкі (18–22 мм)</option>
+                  <option value="board">Дошка обрізна чистова (40 мм)</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
-              <label>Посадка споруди</label>
+              <label>Схема розстановки опор</label>
               <div class="input-wrapper">
-                <select id="berm_option" onchange="calculateAll()">
-                  <option value="0" selected>Повністю підземний (врівень із землею)</option>
-                  <option value="40">Напівзаглиблений (бруствер +40 см)</option>
-                  <option value="60">Напівзаглиблений (бруствер +60 см)</option>
+                <select id="support_scheme" onchange="calculateAll()">
+                  <option value="asymmetric" selected>Дворядна асиметрична (під ліжка NATO 2.1м)</option>
+                  <option value="center">Однорядна центральна (по осі споруди)</option>
+                  <option value="none">Без опор (тільки для B &lt; 2.5 м)</option>
                 </select>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Action Banner with Quick Buttons -->
+        <div class="btn-action-banner">
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: #fff;">Готові перейти до розрахунків?</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Перегляньте відомість матеріалів або покроковий алгоритм спорудження</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn" onclick="switchTab('tab-bom')">📊 Розрахувати матеріали (BOM)</button>
+            <button class="btn btn-secondary" onclick="switchTab('tab-algorithm')">🔨 Алгоритм за етапами ➔</button>
           </div>
         </div>
       </div>
@@ -645,7 +448,7 @@
       <div>
         <div class="card">
           <div class="card-header">
-            <h2>📊 Розрахункові висоти та глибина котловану</h2>
+            <h2>📊 Розрахункові показники</h2>
           </div>
 
           <div class="metric-row">
@@ -662,24 +465,25 @@
               <div class="metric-val" id="res_floor_thick">26 <small>см</small></div>
             </div>
             <div class="metric-box">
-              <div class="metric-label">Навантаження</div>
+              <div class="metric-label">Навантаження даху</div>
               <div class="metric-val" id="res_roof_load">1.6 <small>т/м²</small></div>
             </div>
           </div>
 
-          <div id="alert_excavator" class="alert-banner info">
-            <div>ℹ️ <b>Техніка для розкопки:</b> Для глибини <b><span id="txt_pit_depth_1">3.40</span> м</b> потрібен повноповоротний екскаватор або ПЗМ-2 (глибина до 3.0 м з докопуванням).</div>
+          <!-- Machinery Quick Status -->
+          <div id="alert_machinery_quick" class="alert-banner info">
+            <div>🚜 <b>Техніка для глибини <span id="txt_pit_depth_quick">3.40</span> м:</b> Рекомендовано екскаватор-навантажувач з телескопічною стрілою (JCB 3CX/4CX, Case 580SM) або повноповоротний екскаватор.</div>
           </div>
 
+          <!-- Dynamic SVG Cross Section -->
           <div class="canvas-container">
-            <svg id="svg_cross_section" viewBox="0 0 550 420" width="100%" height="360"></svg>
-            <div class="layer-legend">
-              <div class="legend-item"><div class="legend-color" style="background:#4ade80;"></div>Денна поверхня ґрунту</div>
-              <div class="legend-item"><div class="legend-color" style="background:#78350f;"></div>Маскувальний шар ґрунту</div>
-              <div class="legend-item"><div class="legend-color" style="background:#ca8a04;"></div>Мішки з піском</div>
-              <div class="legend-item"><div class="legend-color" style="background:#b45309;"></div>Накати колод (1 та 2)</div>
-              <div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div>Двоярусні ліжка (2.1х1.6м)</div>
-              <div class="legend-item"><div class="legend-color" style="background:#64748b;"></div>Підлога (піддони+OSB)</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; text-align: left;">
+              <b>Поперечний інженерний розріз (динамічно згідно з введеними даними):</b>
+            </div>
+            <svg id="svg_cross_section" viewBox="0 0 550 430" width="100%" height="370"></svg>
+            
+            <div class="layer-legend" id="dynamic_legend">
+              <!-- Rendered strictly based on inputs -->
             </div>
           </div>
         </div>
@@ -687,104 +491,28 @@
     </div>
   </div>
 
-  <!-- Tab 2: Structural scheme -->
-  <div id="tab-structure" class="tab-pane" style="display: none;">
-    <div class="dashboard-grid">
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <h2>🏗️ Конфігурація опор та поздовжніх балок</h2>
-          </div>
-          <div class="input-grid">
-            <div class="form-group">
-              <label>Схема розстановки опорних стійок</label>
-              <div class="input-wrapper">
-                <select id="support_scheme" onchange="calculateAll()">
-                  <option value="asymmetric" selected>Дворядна асиметрична (під ліжка 2.1м + прохід 1.9м)</option>
-                  <option value="center">Однорядна центральна (по осі споруди)</option>
-                  <option value="none">Без опор (тільки для прольотів &lt; 2.5 м)</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Крок опорних стійок по довжині</label>
-              <div class="input-wrapper">
-                <input type="number" id="post_step" value="1.5" step="0.1" min="1.0" max="2.5" oninput="calculateAll()">
-                <span class="input-unit">м</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Діаметр опорних стійок</label>
-              <div class="input-wrapper">
-                <input type="number" id="post_diam" value="20" step="1" min="16" max="35" oninput="calculateAll()">
-                <span class="input-unit">см</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Діаметр поздовжнього прогону (балки)</label>
-              <div class="input-wrapper">
-                <input type="number" id="beam_diam" value="24" step="1" min="18" max="40" oninput="calculateAll()">
-                <span class="input-unit">см</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h2>🛏️ Розміщення двоярусних ліжок (NATO 2.1 × 0.8 м)</h2>
-          </div>
-          <div class="input-grid">
-            <div class="form-group">
-              <label>Кількість блоків ліжок (лівий ряд)</label>
-              <div class="input-wrapper">
-                <input type="number" id="beds_count" value="5" step="1" min="1" max="15" oninput="calculateAll()">
-                <span class="input-unit">блоків</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Місць для особового складу (2 чол / блок)</label>
-              <div class="input-wrapper">
-                <input type="text" id="beds_capacity" value="10 осіб" disabled>
-              </div>
-            </div>
-          </div>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
-            * Розміщення поперек залишає широкий поздовжній прохід шириною <b><span id="txt_corridor_width">1.9</span> м</b> для швидкого пересування та евакуації.
-          </p>
-        </div>
+  <!-- Tab 2: Machinery (JCB, Case, PZM-2, EOV) -->
+  <div id="tab-machinery" class="tab-pane" style="display: none;">
+    <div class="card">
+      <div class="card-header">
+        <h2>🚜 Інженерна техніка для розкопки котловану (Глибина: <span id="txt_mach_depth">3.40</span> м)</h2>
       </div>
 
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <h2>⚠️ Інженерний аналіз міцності перекриття</h2>
-          </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
+        Оцінка придатності землерийної техніки для риття котловану на розрахункову глибину без влаштування проміжних терас чи уступів:
+      </p>
 
-          <div id="alert_structural_safety" class="alert-banner warning">
-            <div>⚠️ Розрахунок прольоту...</div>
-          </div>
+      <div class="machinery-grid" id="machinery_cards_container">
+        <!-- Rendered by JS -->
+      </div>
 
-          <div class="metric-row">
-            <div class="metric-box">
-              <div class="metric-label">Сумарна вага даху</div>
-              <div class="metric-val" id="res_total_weight">32.4 <small>т</small></div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Кількість стійок</div>
-              <div class="metric-val" id="res_total_posts">18 <small>шт</small></div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Макс. вільний проліт</div>
-              <div class="metric-val" id="res_max_span">1.9 <small>м</small></div>
-            </div>
-          </div>
-
-          <div class="canvas-container">
-            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 6px;">Схема планування (вид зверху)</div>
-            <svg id="svg_top_plan" viewBox="0 0 550 260" width="100%" height="240"></svg>
-          </div>
-        </div>
+      <div style="margin-top: 20px; padding: 14px; background: var(--bg-input); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.6;">
+        <h3 style="color: #fde68a; font-size: 0.95rem; margin-bottom: 6px;">💡 Практичні поради щодо застосування техніки:</h3>
+        <ul style="margin-left: 20px; color: var(--text-main);">
+          <li><b>ПЗМ-2 (полкова землерийна машина):</b> Має максимальну глибину розкопки котловану <b>до 3.0 м</b>. Для глибини <b>> 3.0 м</b> потрібне зняття верхнього шару ґрунту бульдозерним відвалом або докопування ковшовим екскаватором.</li>
+          <li><b>Екскаватори-навантажувачі JCB 3CX / 4CX / Case 580:</b> Використовувати виключно з висунутою <b>телескопічною рукояттю (Extradig)</b>, що дозволяє безпечно копати на глибину до 5.4–5.8 м без сповзання машини у котлован.</li>
+          <li><b>Відвал ґрунту:</b> Відвал вийнятого ґрунту складується на відстані не менше <b>1.5–2.0 м</b> від брівки, щоб вага насипу не спричинила обвал стінок.</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -793,8 +521,31 @@
   <div id="tab-bom" class="tab-pane" style="display: none;">
     <div class="card">
       <div class="card-header">
-        <h2>📋 Відомість матеріалів та лісоматеріалів (BOM)</h2>
-        <button class="btn btn-secondary" onclick="copyBOMTable()">📋 Копіювати таблицю</button>
+        <h2>📋 Відомість матеріалів (BOM) згідно з СВП 3-00(51)238</h2>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="copyBOMTable()">📋 Копіювати таблицю (Excel)</button>
+          <button class="btn" onclick="switchTab('tab-algorithm')">🔨 Алгоритм будівництва ➔</button>
+        </div>
+      </div>
+
+      <!-- Quick BOM highlights -->
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="metric-label">Кругляк (всього)</div>
+          <div class="metric-val" id="bom_stat_logs">14.5 <small>м³</small></div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Дошка необрізна (стіни)</div>
+          <div class="metric-val" id="bom_stat_unedged">2.3 <small>м³</small></div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Дошка обрізна (підлога+двері)</div>
+          <div class="metric-val" id="bom_stat_edged">2.5 <small>м³</small></div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Плівка / Руберойд</div>
+          <div class="metric-val" id="bom_stat_film">220 <small>м²</small></div>
+        </div>
       </div>
 
       <table class="calc-table" id="bom_table">
@@ -802,9 +553,9 @@
           <tr>
             <th>Категорія</th>
             <th>Найменування матеріалу</th>
-            <th>Специфікація / Розміри</th>
+            <th>Призначення та специфікація</th>
             <th>Кількість</th>
-            <th>Од. вим.</th>
+            <th>Од.</th>
             <th>Кубатура / Об'єм</th>
           </tr>
         </thead>
@@ -812,39 +563,41 @@
           <!-- Populated by JS -->
         </tbody>
       </table>
+    </div>
+  </div>
 
-      <div class="action-btn-group">
-        <button class="btn" onclick="switchTab('tab-report')">Сформувати підсумковий звіт</button>
+  <!-- Tab 4: Construction Algorithm by Stages -->
+  <div id="tab-algorithm" class="tab-pane" style="display: none;">
+    <div class="card">
+      <div class="card-header">
+        <h2>🔨 Покроковий алгоритм спорудження за етапами (з переліком матеріалів та техніки)</h2>
+        <button class="btn btn-secondary" onclick="copyAlgorithmText()">📋 Копіювати алгоритм</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        Алгоритм розроблено відповідно до бойового досвіду та методичних рекомендацій <b>СВП 3-00(51)238</b> Командування Сухопутних військ ЗСУ. Кількість матеріалів розрахована спеціально для бліндажа розміром <b><span id="txt_alg_dims">4.0 × 12.0</span> м</b>, глибиною <b><span id="txt_alg_depth">3.40</span> м</b>.
+      </p>
+
+      <div id="algorithm_steps_container">
+        <!-- Rendered dynamically by JS -->
       </div>
     </div>
   </div>
 
-  <!-- Tab 4: Field Marking & Excavation geometry -->
+  <!-- Tab 5: Marking & Slopes -->
   <div id="tab-marking" class="tab-pane" style="display: none;">
     <div class="dashboard-grid">
       <div>
         <div class="card">
           <div class="card-header">
-            <h2>📏 Параметри розмітки котловану</h2>
+            <h2>📏 Параметри розмітки котловану на місцевості</h2>
           </div>
           <div class="input-grid">
             <div class="form-group">
-              <label>Товщина стін та пазух (з кожного боку)</label>
+              <label>Товщина стін та пазух (з боків)</label>
               <div class="input-wrapper">
                 <input type="number" id="wall_clearance" value="0.25" step="0.05" min="0.1" max="0.5" oninput="calculateAll()">
                 <span class="input-unit">м</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Крутість укосу (1 : m)</label>
-              <div class="input-wrapper">
-                <select id="slope_m" onchange="calculateAll()">
-                  <option value="0">Вертикальні стінки (m=0, з кріпленням)</option>
-                  <option value="0.33">Глина щільна (1:0.33)</option>
-                  <option value="0.5" selected>Суглинок (1:0.5)</option>
-                  <option value="0.75">Суглинок м'який / супісок (1:0.75)</option>
-                  <option value="1.0">Пісок сипучий (1:1.0)</option>
-                </select>
               </div>
             </div>
             <div class="form-group">
@@ -859,9 +612,9 @@
           <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
             <b>Правила виносної розмітки:</b>
             <ul style="margin-left: 20px; margin-top: 6px;">
-              <li>Кілочки забиваються на віддалі <b>1.5–2.0 м</b> від лінії верху, щоб екскаватор не збив їх під час осипання ґрунту.</li>
-              <li>Використовуйте плетений поліпропіленовий шнур (4–6 мм), який не розтягується при зволоженні.</li>
-              <li>Обов'язкова перевірка діагоналей: якщо діагоналі рівні — кути прямокутника строго 90°.</li>
+              <li>Використовуйте синтетичний шнур (4–6 мм), який не розтягується при зволоженні.</li>
+              <li>Виносні кілочки забиваються на віддалі <b>1.5–2.0 м</b> від лінії верху, щоб екскаватор не збив їх ковшом.</li>
+              <li><b>Контроль кутів:</b> Діагоналі прямокутника повинні бути строго рівними.</li>
             </ul>
           </div>
         </div>
@@ -870,15 +623,15 @@
       <div>
         <div class="card">
           <div class="card-header">
-            <h2>📐 Точні розміри та діагоналі розмітки</h2>
+            <h2>📐 Точні розміри та діагоналі</h2>
           </div>
           <div class="metric-row">
             <div class="metric-box highlight">
-              <div class="metric-label">Діагональ дна (D дна)</div>
+              <div class="metric-label">Діагональ дна</div>
               <div class="metric-val" id="res_diag_bot">13.28 <small>м</small></div>
             </div>
             <div class="metric-box highlight">
-              <div class="metric-label">Діагональ верху (D верху)</div>
+              <div class="metric-label">Діагональ верху</div>
               <div class="metric-val" id="res_diag_top">17.15 <small>м</small></div>
             </div>
             <div class="metric-box">
@@ -886,37 +639,29 @@
               <div class="metric-val" id="res_diag_stakes">20.40 <small>м</small></div>
             </div>
             <div class="metric-box">
-              <div class="metric-label">Об'єм ґрунту (виїмка)</div>
+              <div class="metric-label">Об'єм ґрунту</div>
               <div class="metric-val" id="res_earth_vol">285 <small>м³</small></div>
             </div>
           </div>
 
           <table class="calc-table">
             <thead>
-              <tr>
-                <th>Контур</th>
-                <th>Ширина (B)</th>
-                <th>Довжина (L)</th>
-                <th>Діагональ (D)</th>
-              </tr>
+              <tr><th>Контур</th><th>Ширина (B)</th><th>Довжина (L)</th><th>Діагональ (D)</th></tr>
             </thead>
             <tbody>
               <tr>
                 <td><b>Дно котловану</b></td>
-                <td id="row_bot_b">4.50 м</td>
-                <td id="row_bot_l">12.50 м</td>
-                <td id="row_bot_d" style="color:var(--accent); font-weight:700;">13.28 м</td>
+                <td id="row_bot_b">4.50 м</td><td id="row_bot_l">12.50 м</td>
+                <td id="row_bot_d" class="highlight-cell">13.28 м</td>
               </tr>
               <tr>
                 <td><b>Верхня брівка (з укосами)</b></td>
-                <td id="row_top_b">7.90 м</td>
-                <td id="row_top_l">15.90 м</td>
-                <td id="row_top_d" style="color:var(--accent); font-weight:700;">17.15 м</td>
+                <td id="row_top_b">7.90 м</td><td id="row_top_l">15.90 м</td>
+                <td id="row_top_d" class="highlight-cell">17.15 м</td>
               </tr>
               <tr>
                 <td><b>Контур виносних кілків</b></td>
-                <td id="row_stk_b">10.90 м</td>
-                <td id="row_stk_l">18.90 м</td>
+                <td id="row_stk_b">10.90 м</td><td id="row_stk_l">18.90 м</td>
                 <td id="row_stk_d" style="color:#38bdf8; font-weight:700;">20.40 м</td>
               </tr>
             </tbody>
@@ -926,129 +671,49 @@
     </div>
   </div>
 
-  <!-- Tab 5: Engineering Systems -->
-  <div id="tab-systems" class="tab-pane" style="display: none;">
-    <div class="dashboard-grid">
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <h2>💧 Водовідведення та осушення</h2>
-          </div>
-          <div style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
-            <p><b>1. Ухил дна котловану:</b></p>
-            <p style="color: var(--text-muted); margin-bottom: 10px;">
-              Дно котловану обов'язково профілюється з поздовжнім ухилом <b>0.02–0.03</b> (2–3 см на 1 метр) у напрямку до входу/тамбура.
-              Для довжини <b><span id="txt_sys_len">12.0</span> м</b> перепад позначки дна становить <b><span id="txt_sys_drop">24–36</span> см</b>.
-            </p>
-
-            <p><b>2. Водовідвідні канавки:</b></p>
-            <p style="color: var(--text-muted); margin-bottom: 10px;">
-              Вздовж поздовжніх стін під піддонами влаштовуються канавки перетином 20×20 см, засипані щебенем або битою цеглою (дренажний шар 10 см).
-            </p>
-
-            <p><b>3. Водозбірний зумпф (колодязь):</b></p>
-            <p style="color: var(--text-muted); margin-bottom: 10px;">
-              У найнижчій точці біля входу викопується зумпф розміром <b>80×80 см і глибиною 60–80 см</b> нижче рівня підсипки. Встановлюється перфорована бочка або дерев'яний короб, куди монтується дренажний насос або передбачається відкачування помпою.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <h2>🌪️ Вентиляційні системи</h2>
-          </div>
-          <div class="metric-row">
-            <div class="metric-box">
-              <div class="metric-label">Потрібно витяжних шахт</div>
-              <div class="metric-val" id="res_vent_exhaust">3 <small>шт</small></div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Припливні канали</div>
-              <div class="metric-val" id="res_vent_intake">2 <small>шт</small></div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-label">Рекомендований діаметр</div>
-              <div class="metric-val">150–200 <small>мм</small></div>
-            </div>
-          </div>
-
-          <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-            <b>Правила розміщення вентиляції:</b>
-            <ul style="margin-left: 20px; margin-top: 6px;">
-              <li><b>Витяжні труби:</b> Забір повітря під самою стелею (10–15 см від накату) у найтепліших зонах та в тупикових відсіках. Труба виводиться вище маскувального шару на 50–70 см із козирком і дефлектором.</li>
-              <li><b>Припливні труби:</b> Забір повітря опускається до 20–30 см від рівня підлоги в районі вхідної групи або тамбура.</li>
-              <li><b>Захист від уламків:</b> Верхні оголовки труб робляться з Г-подібним коліном та захисною сіткою від гризунів і закидання гранат/уламків.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
-  <!-- Tab 7: Construction Algorithm (Dynamic Step-by-Step) -->
-  <div id="tab-algorithm" class="tab-pane" style="display: none;">
-    <div class="card">
-      <div class="card-header">
-        <h2>🔨 Технологічна карта та алгоритм будівництва</h2>
-        <button class="btn btn-secondary" onclick="copyAlgorithmText()">📋 Копіювати алгоритм</button>
-      </div>
-
-      <div style="margin-bottom: 16px; font-size: 0.9rem; color: var(--text-muted);">
-        Алгоритм автоматично адаптовано під розраховані параметри: <b>глибина котловану <span id="alg_depth">3.40</span> м, розміри <span id="alg_dims">4.0 × 12.0</span> м, <span id="alg_layers">2</span> накати колод</b>.
-      </div>
-
-      <div id="algorithm_steps_container">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Tab 8: Field Recommendations & Safety -->
+  <!-- Tab 6: Recommendations & Safety -->
   <div id="tab-recommendations" class="tab-pane" style="display: none;">
     <div class="card">
       <div class="card-header">
-        <h2>💡 Інженерні рекомендації, живучість та техніка безпеки</h2>
+        <h2>💡 Інженерні рекомендації та живучість (СВП 3-00(51)238)</h2>
       </div>
 
       <div class="dashboard-grid">
         <div>
           <div class="card" style="background: var(--bg-input); border-color: var(--border-color);">
-            <h3 style="font-size: 1rem; color: #fde68a; margin-bottom: 8px;">⚠️ 1. Безпека земляних робіт (глибина > 3.0 м)</h3>
+            <h3 style="font-size: 0.95rem; color: #fde68a; margin-bottom: 8px;">⚠️ 1. Безпека земляних робіт (глибина > 3.0 м)</h3>
             <ul style="font-size: 0.85rem; color: var(--text-main); margin-left: 18px; line-height: 1.6;">
-              <li><b>Заборона перебування під стіною:</b> У сипучих (піщаних) ґрунтах при вертикальних стінах обвал відбувається миттєво без попередніх ознак.</li>
-              <li><b>Обов'язковий одяг крутостей:</b> Монтаж забірних дощок і стійок виконувати негайно після досягнення проєктної глибини секціями.</li>
-              <li><b>Брівка безпеки:</b> Відвал ґрунту екскаватором розміщувати не ближче <b>1.5–2.0 м</b> від брівки котловану, щоб уникнути обвалення під вагою насипу.</li>
+              <li><b>Заборона перебування людей під стіною:</b> У піщаних ґрунтах обвал вертикальних стінок відбувається раптово без попереднього тріскання.</li>
+              <li><b>Одночасна засипка пазух:</b> Засипати протилежні сторони стін бліндажа ґрунтом/піском одночасно, щоб тиск не зрушив дерев'яний каркас (п. 6 методички).</li>
+              <li><b>Брівка безпеки:</b> Відвал ґрунту екскаватором робити на відстані не менше 1.5–2.0 м від краю.</li>
             </ul>
           </div>
 
           <div class="card" style="background: var(--bg-input); border-color: var(--border-color);">
-            <h3 style="font-size: 1rem; color: #6ee7b7; margin-bottom: 8px;">🪵 2. Довговічність та обробка деревини</h3>
+            <h3 style="font-size: 0.95rem; color: #6ee7b7; margin-bottom: 8px;">🪵 2. Обробка деревини та зарізи</h3>
             <ul style="font-size: 0.85rem; color: var(--text-main); margin-left: 18px; line-height: 1.6;">
-              <li><b>Корування колод:</b> Усі колоди обов'язково очищати від кори. Некорована деревина у підземних умовах загниває втричі швидше і вражається комахами-шашелями.</li>
-              <li><b>Обробка антисептиком:</b> Обробка відпрацьованим моторним мастилом або бітумним праймером нижньої частини стійок, що контактують із землею.</li>
-              <li><b>Піддони:</b> Обов'язково обробляти антисептиком або сумішшю мастила з дизпаливом перед укладанням на дренаж.</li>
+              <li><b>Зарізи на колодах:</b> У всіх поздовжніх і поперечних балках обов'язково робити зарізи у півдерева для жорсткого зчеплення (п. 2, 3 методички).</li>
+              <li><b>Закопування стійок:</b> Опорні стовпи закопувати в дно котловану на глибину <b>не менше 50 см</b>.</li>
+              <li><b>Корування та антисептування:</b> Корування на 100% обов'язкове. Торці стійок промащувати відпрацьованим мастилом або бітумним праймером.</li>
             </ul>
           </div>
         </div>
 
         <div>
           <div class="card" style="background: var(--bg-input); border-color: var(--border-color);">
-            <h3 style="font-size: 1rem; color: #93c5fd; margin-bottom: 8px;">🛡️ 3. Захист від FPV-дронів та скидів</h3>
+            <h3 style="font-size: 0.95rem; color: #93c5fd; margin-bottom: 8px;">🛡️ 3. Захист від FPV-дронів та скидів</h3>
             <ul style="font-size: 0.85rem; color: var(--text-main); margin-left: 18px; line-height: 1.6;">
-              <li><b>Злам вхідної групи:</b> Вхід обов'язково влаштовувати з подвійним зламом (Г- або Z-подібний тамбур). Прямий вхід у бліндаж категорично неприпустимий.</li>
-              <li><b>Протидронова сітка (рабиця/рибальська):</b> Натягується на висоті 1.5–2.0 м над вхідним приямком і сходовим спуском для завчасного перехоплення або детонації FPV.</li>
-              <li><b>Бронедвері:</b> Обшивка вхідних дверей листовим металом (товщина 2–3 мм) із внутрішнім протиосколковим пакетом з балістичного кевлару або товстої дошки (50 мм).</li>
+              <li><b>Вхідний тамбур:</b> Обов'язкове встановлення <b>двох дверей</b> із тамбуром і зламом на $90^\circ$ (п. 16 методички).</li>
+              <li><b>Протидронова сітка:</b> Натягується на каркасі над спуском на висоті 1.5–2.0 м для детонації дронів на підльоті.</li>
+              <li><b>Вентиляція:</b> Припливна труба (∅ 100 мм) — 50 см від підлоги; витяжна (∅ 100–200 мм) — під стелею. Обов'язкові захисні сітки та козирки від закидання гранат.</li>
             </ul>
           </div>
 
           <div class="card" style="background: var(--bg-input); border-color: var(--border-color);">
-            <h3 style="font-size: 1rem; color: #f472b6; margin-bottom: 8px;">📡 4. Кабельні вводи та герметизація</h3>
+            <h3 style="font-size: 0.95rem; color: #f472b6; margin-bottom: 8px;">✨ 4. Тепловідбивний екран та гідроізоляція</h3>
             <ul style="font-size: 0.85rem; color: var(--text-main); margin-left: 18px; line-height: 1.6;">
-              <li><b>Закладні гільзи:</b> Кабелі живлення від генератора, лінія Starlink та антени радіозв'язку заводяться виключно через сталеві або пластикові гільзи (труби ∅ 50–75 мм) під нахилом назовні.</li>
-              <li><b>Герметизація:</b> Пазухи гільз після протяжки кабелів ущільнюються монтажною вогнетривкою піною та замазуються гідроізоляційною бітумною мастикою.</li>
+              <li><b>Екран на стелю:</b> Відповідно до п. 16 методички, монтаж тепловідбивного фольгованого екрана на стелю кардинально покращує освітленість та утримує тепло від буржуйки.</li>
+              <li><b>Випуск плівки:</b> Гідроізоляційну плівку над бліндажем випускати на відстань <b>не менше 1 м</b> за межі стін бліндажа (п. 14 методички).</li>
             </ul>
           </div>
         </div>
@@ -1056,62 +721,116 @@
     </div>
   </div>
 
-  <!-- Tab 6: Full Text Report -->
+  <!-- Tab 7: Full Text Report -->
   <div id="tab-report" class="tab-pane" style="display: none;">
     <div class="card">
       <div class="card-header">
-        <h2>📄 Зведений інженерний звіт та специфікація</h2>
-        <div class="action-btn-group" style="margin: 0;">
-          <button class="btn" onclick="copyReportText()">📋 Копіювати звіт у буфер</button>
+        <h2>📄 Зведений інженерний звіт</h2>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn" onclick="copyReportText()">📋 Копіювати звіт</button>
           <button class="btn btn-secondary" onclick="window.print()">🖨️ Друк / PDF</button>
         </div>
       </div>
       <div class="report-box" id="report_content_text">
-        <!-- Generated text -->
+        <!-- Rendered text -->
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // Presets configuration
+  // Service Worker for offline use
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+
+  // Presets
   const presets = {
     large_nato: {
       width: 4.0, length: 12.0, height: 2.2, soil: 'loam',
       log_layers: '2', d1: 20, d2: 20, inter_soil: 15, sandbags: '2', soil_cover: 45,
-      floor_drain: 10, floor_pallets: '14', floor_finish: '2', berm: '0',
-      support_scheme: 'asymmetric', post_step: 1.5, post_diam: 20, beam_diam: 24,
-      beds_count: 5, wall_clearance: 0.25, slope_m: '0.5', stake_offset: 1.5
+      floor_drain: 10, floor_pallets: '14', floor_finish: 'osb',
+      support_scheme: 'asymmetric'
     },
     squad: {
       width: 3.5, length: 6.0, height: 2.1, soil: 'loam',
       log_layers: '2', d1: 20, d2: 20, inter_soil: 15, sandbags: '2', soil_cover: 45,
-      floor_drain: 10, floor_pallets: '14', floor_finish: '2', berm: '0',
-      support_scheme: 'asymmetric', post_step: 1.5, post_diam: 20, beam_diam: 22,
-      beds_count: 3, wall_clearance: 0.25, slope_m: '0.5', stake_offset: 1.5
+      floor_drain: 10, floor_pallets: '14', floor_finish: 'board',
+      support_scheme: 'asymmetric'
     },
     hq: {
       width: 4.0, length: 8.0, height: 2.2, soil: 'clay',
       log_layers: '2', d1: 22, d2: 22, inter_soil: 20, sandbags: '2', soil_cover: 60,
-      floor_drain: 10, floor_pallets: '14', floor_finish: '2', berm: '0',
-      support_scheme: 'center', post_step: 1.5, post_diam: 22, beam_diam: 25,
-      beds_count: 2, wall_clearance: 0.25, slope_m: '0.33', stake_offset: 1.5
+      floor_drain: 10, floor_pallets: '14', floor_finish: 'board',
+      support_scheme: 'center'
     },
     trench: {
       width: 1.5, length: 4.0, height: 1.8, soil: 'loam',
-      log_layers: '1', d1: 18, d2: 18, inter_soil: 0, sandbags: '1', soil_cover: 50,
-      floor_drain: 10, floor_pallets: '0', floor_finish: '3', berm: '0',
-      support_scheme: 'none', post_step: 2.0, post_diam: 18, beam_diam: 18,
-      beds_count: 0, wall_clearance: 0.15, slope_m: '0.33', stake_offset: 1.5
+      log_layers: '1', d1: 18, d2: 18, inter_soil: 0, sandbags: '0', soil_cover: 50,
+      floor_drain: 10, floor_pallets: '0', floor_finish: 'board',
+      support_scheme: 'none'
     }
   };
+
+  // Machinery Specs Database
+  const machineryDatabase = [
+    {
+      id: "jcb_3cx",
+      name: "JCB 3CX (Extradig)",
+      type: "Екскаватор-навантажувач",
+      maxDepthStd: 4.24,
+      maxDepthTele: 5.46,
+      desc: "Найпоширеніша машина. З телескопічною рукояттю копає до 5.46 м. Оптимальний для швидкого розгортання."
+    },
+    {
+      id: "jcb_4cx",
+      name: "JCB 4CX (Extradig)",
+      type: "Важкий екскаватор-навантажувач",
+      maxDepthStd: 4.67,
+      maxDepthTele: 5.88,
+      desc: "Рівноколісний повнопривідний екскаватор. Збільшена глибина (до 5.88 м) та висока прохідність у багнюці."
+    },
+    {
+      id: "case_580",
+      name: "Case 580 Super M / SM2",
+      type: "Екскаватор-навантажувач",
+      maxDepthStd: 4.40,
+      maxDepthTele: 5.50,
+      desc: "Потужний навантажувач (Case S580SM2). Глибина з телескопом 5.50 м. Чудово працює у щільних суглинках."
+    },
+    {
+      id: "pzm_2",
+      name: "ПЗМ-2 (ЗСУ)",
+      type: "Полкова землерийна машина",
+      maxDepthStd: 3.00,
+      maxDepthTele: 3.00,
+      desc: "Військова машина. Риє котловани до 3.0 м завглибшки. Для глибини >3.0 м потрібен уступ або докопування."
+    },
+    {
+      id: "eov_4421",
+      name: "ЕОВ-4421 (КрАЗ-255Б)",
+      type: "Армійський екскаватор",
+      maxDepthStd: 3.25,
+      maxDepthTele: 4.00,
+      desc: "Військовий гідравлічний екскаватор на шасі КрАЗ. Глибина копання ковшем до 3.25–4.0 м."
+    },
+    {
+      id: "heavy_excavator",
+      name: "Повноповоротний екскаватор (14–22 т)",
+      type: "Гусеничний / Колісний екскаватор",
+      maxDepthStd: 6.50,
+      maxDepthTele: 7.50,
+      desc: "Професійний важкий екскаватор. Забезпечує будь-яку глибину без ризику зсуву стінок."
+    }
+  ];
 
   function loadPreset(key) {
     const p = presets[key];
     if (!p) return;
-
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event && event.target) event.target.classList.add('active');
 
     document.getElementById('dim_width').value = p.width;
     document.getElementById('dim_length').value = p.length;
@@ -1126,15 +845,7 @@
     document.getElementById('floor_drain').value = p.floor_drain;
     document.getElementById('floor_pallets').value = p.floor_pallets;
     document.getElementById('floor_finish').value = p.floor_finish;
-    document.getElementById('berm_option').value = p.berm;
     document.getElementById('support_scheme').value = p.support_scheme;
-    document.getElementById('post_step').value = p.post_step;
-    document.getElementById('post_diam').value = p.post_diam;
-    document.getElementById('beam_diam').value = p.beam_diam;
-    document.getElementById('beds_count').value = p.beds_count;
-    document.getElementById('wall_clearance').value = p.wall_clearance;
-    document.getElementById('slope_m').value = p.slope_m;
-    document.getElementById('stake_offset').value = p.stake_offset;
 
     calculateAll();
   }
@@ -1142,29 +853,26 @@
   function switchTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
     document.getElementById(tabId).style.display = 'block';
-    
-    // Find matching button
-    const btns = document.querySelectorAll('.tab-btn');
-    btns.forEach(btn => {
-      if (btn.getAttribute('onclick').includes(tabId)) {
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
         btn.classList.add('active');
       }
     });
 
-    if (tabId === 'tab-report') {
-      generateReport();
-    }
+    if (tabId === 'tab-report') generateReport();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   let calcState = {};
 
   function calculateAll() {
-    // 1. Geometry Inputs
     const W = parseFloat(document.getElementById('dim_width').value) || 4.0;
     const L = parseFloat(document.getElementById('dim_length').value) || 12.0;
     const H_int = parseFloat(document.getElementById('dim_height').value) || 2.2;
+    const soil_type = document.getElementById('soil_type').value;
+
     const log_layers = parseInt(document.getElementById('log_layers').value) || 2;
     const d1_cm = parseFloat(document.getElementById('log_d1').value) || 20;
     const d2_cm = parseFloat(document.getElementById('log_d2').value) || 20;
@@ -1173,76 +881,67 @@
     const sandbag_cm = sandbag_layers === 1 ? 14 : (sandbag_layers === 2 ? 26 : 0);
     const soil_cover_cm = parseFloat(document.getElementById('soil_cover').value) || 45;
 
-    // Floor inputs
     const floor_drain_cm = parseFloat(document.getElementById('floor_drain').value) || 10;
     const floor_pallets_cm = parseFloat(document.getElementById('floor_pallets').value) || 0;
-    const floor_finish_cm = parseFloat(document.getElementById('floor_finish').value) || 2;
+    const floor_finish = document.getElementById('floor_finish').value; // 'osb' or 'board'
+    const floor_finish_cm = floor_finish === 'osb' ? 2 : 4; // 2cm OSB or 4cm Board
     const floor_thick_total_m = (floor_drain_cm + floor_pallets_cm + floor_finish_cm) / 100;
 
-    // Visibility toggle
     document.getElementById('group_d2').style.display = log_layers === 2 ? 'flex' : 'none';
     document.getElementById('group_inter_soil').style.display = log_layers === 2 ? 'flex' : 'none';
 
-    // Roof thickness calculations
-    const roof_logs_m = log_layers === 2 
-      ? ((d1_cm + d2_cm + inter_soil_cm) / 100)
-      : (d1_cm / 100);
+    // Roof Thickness
+    const roof_logs_m = log_layers === 2 ? ((d1_cm + d2_cm + inter_soil_cm) / 100) : (d1_cm / 100);
     const roof_sandbags_m = sandbag_cm / 100;
     const roof_soil_m = soil_cover_cm / 100;
     const total_roof_thick_m = roof_logs_m + roof_sandbags_m + roof_soil_m;
 
-    // Full depth calculation
-    const berm_cm = parseFloat(document.getElementById('berm_option').value) || 0;
-    const berm_m = berm_cm / 100;
-    const full_structure_height_m = floor_thick_total_m + H_int + total_roof_thick_m;
-    const pit_depth_m = Math.max(1.0, full_structure_height_m - berm_m);
+    // Total Pit Depth
+    const full_struct_height_m = floor_thick_total_m + H_int + total_roof_thick_m;
+    const pit_depth_m = full_struct_height_m;
 
     // Loads
     const soil_density = 1700; // kg/m3
     const wood_density = 650;  // kg/m3
     const sandbag_load = sandbag_layers === 1 ? 180 : (sandbag_layers === 2 ? 350 : 0);
     const soil_load = (roof_soil_m + (log_layers === 2 ? inter_soil_cm/100 : 0)) * soil_density;
-    const logs_load = (roof_logs_m * 0.7) * wood_density; // effective wood volume factor
+    const logs_load = (roof_logs_m * 0.7) * wood_density;
     const total_roof_load_kg_m2 = soil_load + logs_load + sandbag_load;
     const total_roof_load_t_m2 = total_roof_load_kg_m2 / 1000;
     const total_roof_weight_tons = (total_roof_load_kg_m2 * W * L) / 1000;
 
-    // Supports
+    // Structural Supports
     const support_scheme = document.getElementById('support_scheme').value;
-    const post_step = parseFloat(document.getElementById('post_step').value) || 1.5;
-    const post_diam_cm = parseFloat(document.getElementById('post_diam').value) || 20;
-    const beam_diam_cm = parseFloat(document.getElementById('beam_diam').value) || 24;
-    
+    const post_step = 1.5; // standard 1.5 m
+    const post_diam_cm = 20;
+    const beam_diam_cm = 24;
+
     let num_support_lines = 0;
     let max_span_m = W;
     let corridor_width = W;
 
-    if (support_scheme === 'none') {
-      num_support_lines = 0;
-      max_span_m = W;
+    if (support_scheme === 'asymmetric') {
+      num_support_lines = 2;
+      corridor_width = Math.max(1.2, W - 2.1);
+      max_span_m = 1.9;
     } else if (support_scheme === 'center') {
       num_support_lines = 1;
-      max_span_m = W / 2;
       corridor_width = (W / 2) - 0.2;
-    } else if (support_scheme === 'asymmetric') {
-      num_support_lines = 2; // Left line at 2.1m, Right line at 1.0-1.2m from right wall
-      max_span_m = Math.max(1.9, W - 2.1 - 1.0);
-      corridor_width = W - 2.1; // Free aisle on right
+      max_span_m = W / 2;
+    } else {
+      num_support_lines = 0;
+      corridor_width = W;
+      max_span_m = W;
     }
 
     const posts_per_line = Math.ceil(L / post_step) + 1;
     const total_posts = num_support_lines * posts_per_line;
     const total_beam_length = num_support_lines * L;
 
-    // Beds
-    const beds_count = parseInt(document.getElementById('beds_count').value) || 0;
-    document.getElementById('beds_capacity').value = (beds_count * 2) + " осіб";
-    document.getElementById('txt_corridor_width').innerText = corridor_width.toFixed(1);
-
-    // Excavation & Slopes
-    const wall_clearance = parseFloat(document.getElementById('wall_clearance').value) || 0.25;
-    const slope_m = parseFloat(document.getElementById('slope_m').value) || 0.5;
-    const stake_offset = parseFloat(document.getElementById('stake_offset').value) || 1.5;
+    // Marking & Earth
+    const wall_clearance = parseFloat(document.getElementById('wall_clearance') ? document.getElementById('wall_clearance').value : 0.25) || 0.25;
+    const stake_offset = parseFloat(document.getElementById('stake_offset') ? document.getElementById('stake_offset').value : 1.5) || 1.5;
+    const slope_m = soil_type === 'sand' ? 1.0 : (soil_type === 'clay' ? 0.5 : 0.67);
 
     const pit_bot_w = W + 2 * wall_clearance;
     const pit_bot_l = L + 2 * wall_clearance;
@@ -1256,332 +955,385 @@
     const stakes_l = pit_top_l + 2 * stake_offset;
     const stakes_diag = Math.sqrt(stakes_w * stakes_w + stakes_l * stakes_l);
 
-    // Prismoid Earth Volume
     const S_bot = pit_bot_w * pit_bot_l;
     const S_top = pit_top_w * pit_top_l;
     const S_mid = ((pit_bot_w + pit_top_w) / 2) * ((pit_bot_l + pit_top_l) / 2);
     const earth_volume = (pit_depth_m / 6) * (S_bot + S_top + 4 * S_mid);
 
-    // Engineering Systems
+    const beds_count = support_scheme === 'asymmetric' ? Math.min(8, Math.floor((L - 1.5) / 1.0)) : 0;
     const exhaust_vents = Math.max(2, Math.ceil(L / 4));
     const intake_vents = Math.max(1, Math.ceil(exhaust_vents / 2));
-    const water_drop_cm = Math.round(L * 2.5); // 2.5 cm per m
+    const water_drop_cm = Math.round(L * 2.5);
 
-    // Save State
     calcState = {
-      W, L, H_int, log_layers, d1_cm, d2_cm, inter_soil_cm, sandbag_layers, sandbag_cm, soil_cover_cm,
-      floor_drain_cm, floor_pallets_cm, floor_finish_cm, floor_thick_total_m,
+      W, L, H_int, soil_type, slope_m,
+      log_layers, d1_cm, d2_cm, inter_soil_cm, sandbag_layers, sandbag_cm, soil_cover_cm,
+      floor_drain_cm, floor_pallets_cm, floor_finish, floor_finish_cm, floor_thick_total_m,
       roof_logs_m, roof_sandbags_m, roof_soil_m, total_roof_thick_m, pit_depth_m,
       total_roof_load_t_m2, total_roof_weight_tons,
-      support_scheme, post_step, post_diam_cm, beam_diam_cm, total_posts, total_beam_length, max_span_m,
-      beds_count, corridor_width,
-      wall_clearance, slope_m, stake_offset,
-      pit_bot_w, pit_bot_l, pit_bot_diag,
-      pit_top_w, pit_top_l, pit_top_diag,
+      support_scheme, post_step, post_diam_cm, beam_diam_cm, total_posts, total_beam_length, max_span_m, corridor_width,
+      beds_count, wall_clearance, stake_offset,
+      pit_bot_w, pit_bot_l, pit_bot_diag, pit_top_w, pit_top_l, pit_top_diag,
       stakes_w, stakes_l, stakes_diag, earth_volume,
       exhaust_vents, intake_vents, water_drop_cm
     };
 
-    // Update UI Metrics Tab 1
+    // Update Metrics
     document.getElementById('res_pit_depth').innerHTML = `${pit_depth_m.toFixed(2)} <small>м</small>`;
     document.getElementById('res_roof_thick').innerHTML = `${total_roof_thick_m.toFixed(2)} <small>м</small>`;
-    document.getElementById('res_floor_thick').innerHTML = `${Math.round(floor_thick_total_m*100)} <small>см</small>`;
+    document.getElementById('res_floor_thick').innerHTML = `${Math.round(floor_thick_total_m * 100)} <small>см</small>`;
     document.getElementById('res_roof_load').innerHTML = `${total_roof_load_t_m2.toFixed(1)} <small>т/м²</small>`;
-    document.getElementById('txt_pit_depth_1').innerText = pit_depth_m.toFixed(2);
+    document.getElementById('txt_pit_depth_quick').innerText = pit_depth_m.toFixed(2);
+    document.getElementById('txt_mach_depth').innerText = pit_depth_m.toFixed(2);
+    document.getElementById('txt_alg_dims').innerText = `${W.toFixed(1)} × ${L.toFixed(1)}`;
+    document.getElementById('txt_alg_depth').innerText = pit_depth_m.toFixed(2);
 
-    // Update UI Metrics Tab 2
-    document.getElementById('res_total_weight').innerHTML = `${total_roof_weight_tons.toFixed(1)} <small>т</small>`;
-    document.getElementById('res_total_posts').innerHTML = `${total_posts} <small>шт</small>`;
-    document.getElementById('res_max_span').innerHTML = `${max_span_m.toFixed(1)} <small>м</small>`;
-
-    // Safety Alert logic
-    const safetyBanner = document.getElementById('alert_structural_safety');
-    if (W > 3.0 && support_scheme === 'none') {
-      safetyBanner.className = 'alert-banner danger';
-      safetyBanner.innerHTML = `<div>🚨 <b>Критична небезпека руйнування!</b> При ширині ${W} м та вазі покрівлі ${total_roof_weight_tons.toFixed(1)} т відсутність опор гарантовано призведе до проламування колод! Обов'язково оберіть асиметричну або центральну схему опор!</div>`;
-    } else if (W >= 2.5 && support_scheme === 'none') {
-      safetyBanner.className = 'alert-banner warning';
-      safetyBanner.innerHTML = `<div>⚠️ <b>Граничний проліт (${W} м)!</b> Рекомендовано встановити підпірні стійки або збільшити діаметр колод перекриття до ≥ 26–28 см.</div>`;
-    } else {
-      safetyBanner.className = 'alert-banner info';
-      safetyBanner.innerHTML = `<div>✅ <b>Конструкція збалансована:</b> Прогін розділено на безпечні секції (макс. вільний проліт ${max_span_m.toFixed(1)} м). Опорні стійки надійно сприймають навантаження ${total_roof_weight_tons.toFixed(1)} т.</div>`;
+    // Marking Tab values
+    if (document.getElementById('res_diag_bot')) {
+      document.getElementById('res_diag_bot').innerHTML = `${pit_bot_diag.toFixed(2)} <small>м</small>`;
+      document.getElementById('res_diag_top').innerHTML = `${pit_top_diag.toFixed(2)} <small>м</small>`;
+      document.getElementById('res_diag_stakes').innerHTML = `${stakes_diag.toFixed(2)} <small>м</small>`;
+      document.getElementById('res_earth_vol').innerHTML = `${Math.round(earth_volume)} <small>м³</small>`;
+      document.getElementById('row_bot_b').innerText = `${pit_bot_w.toFixed(2)} м`;
+      document.getElementById('row_bot_l').innerText = `${pit_bot_l.toFixed(2)} м`;
+      document.getElementById('row_bot_d').innerText = `${pit_bot_diag.toFixed(2)} м`;
+      document.getElementById('row_top_b').innerText = `${pit_top_w.toFixed(2)} м`;
+      document.getElementById('row_top_l').innerText = `${pit_top_l.toFixed(2)} м`;
+      document.getElementById('row_top_d').innerText = `${pit_top_diag.toFixed(2)} м`;
+      document.getElementById('row_stk_b').innerText = `${stakes_w.toFixed(2)} м`;
+      document.getElementById('row_stk_l').innerText = `${stakes_l.toFixed(2)} м`;
+      document.getElementById('row_stk_d').innerText = `${stakes_diag.toFixed(2)} м`;
     }
 
-    // Update UI Metrics Tab 4 (Marking)
-    document.getElementById('res_diag_bot').innerHTML = `${pit_bot_diag.toFixed(2)} <small>м</small>`;
-    document.getElementById('res_diag_top').innerHTML = `${pit_top_diag.toFixed(2)} <small>м</small>`;
-    document.getElementById('res_diag_stakes').innerHTML = `${stakes_diag.toFixed(2)} <small>м</small>`;
-    document.getElementById('res_earth_vol').innerHTML = `${Math.round(earth_volume)} <small>м³</small>`;
-
-    document.getElementById('row_bot_b').innerText = `${pit_bot_w.toFixed(2)} м`;
-    document.getElementById('row_bot_l').innerText = `${pit_bot_l.toFixed(2)} м`;
-    document.getElementById('row_bot_d').innerText = `${pit_bot_diag.toFixed(2)} м`;
-
-    document.getElementById('row_top_b').innerText = `${pit_top_w.toFixed(2)} м`;
-    document.getElementById('row_top_l').innerText = `${pit_top_l.toFixed(2)} м`;
-    document.getElementById('row_top_d').innerText = `${pit_top_diag.toFixed(2)} м`;
-
-    document.getElementById('row_stk_b').innerText = `${stakes_w.toFixed(2)} м`;
-    document.getElementById('row_stk_l').innerText = `${stakes_l.toFixed(2)} м`;
-    document.getElementById('row_stk_d').innerText = `${stakes_diag.toFixed(2)} м`;
-
-    // Update UI Metrics Tab 5 (Systems)
-    document.getElementById('txt_sys_len').innerText = L.toFixed(1);
-    document.getElementById('txt_sys_drop').innerText = `${water_drop_cm}–${water_drop_cm + 10}`;
-    document.getElementById('res_vent_exhaust').innerHTML = `${exhaust_vents} <small>шт</small>`;
-    document.getElementById('res_vent_intake').innerHTML = `${intake_vents} <small>шт</small>`;
-
-    // Render Graphics and Tables
-    renderCrossSectionSVG();
-    renderTopPlanSVG();
-    updateBOMTable();
+    renderSVG();
+    renderMachinery();
+    renderBOM();
     renderAlgorithm();
   }
 
-  function renderCrossSectionSVG() {
-    const svg = document.getElementById('svg_cross_section');
+  // 1. Precise SVG Cross Section Rendering
+  function renderSVG() {
     const s = calcState;
-    if (!s.pit_depth_m) return;
+    const svg = document.getElementById('svg_cross_section');
+    const leg = document.getElementById('dynamic_legend');
+    if (!svg || !s.pit_depth_m) return;
 
-    svg.innerHTML = `
+    // Y coordinates
+    const yGround = 80;
+    const yBot = 385;
+    const totalH = yBot - yGround; // represents s.pit_depth_m
+
+    // Height ratios
+    const scale = totalH / s.pit_depth_m;
+    const hFloorPx = Math.max(20, s.floor_thick_total_m * scale);
+    const yFloorTop = yBot - hFloorPx;
+
+    const hRoomPx = s.H_int * scale;
+    const yCeiling = yFloorTop - hRoomPx;
+
+    // Floor label
+    let floorName = "Підлога: ";
+    if (s.floor_pallets_cm > 0 && s.floor_finish === 'osb') {
+      floorName += "Піддони (14см) + OSB-3 (18мм)";
+    } else if (s.floor_pallets_cm > 0 && s.floor_finish === 'board') {
+      floorName += "Піддони (14см) + Дошка обрізна (40мм)";
+    } else {
+      floorName += "Дошка обрізна (40мм) по лагах";
+    }
+
+    let svgHtml = `
       <defs>
-        <pattern id="pat_soil" width="12" height="12" patternUnits="userSpaceOnUse">
-          <path d="M0 6 L12 6 M6 0 L6 12" stroke="#5c290d" stroke-width="0.8"/>
+        <pattern id="pat_soil" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M0 5 L10 5 M5 0 L5 10" stroke="#5c290d" stroke-width="0.8"/>
         </pattern>
-        <pattern id="pat_sandbags" width="24" height="12" patternUnits="userSpaceOnUse">
-          <rect width="24" height="12" fill="#ca8a04" stroke="#854d0e" stroke-width="0.7"/>
-          <path d="M12 0 L12 12" stroke="#854d0e" stroke-width="0.7"/>
+        <pattern id="pat_sandbags" width="22" height="11" patternUnits="userSpaceOnUse">
+          <rect width="22" height="11" fill="#ca8a04" stroke="#854d0e" stroke-width="0.7"/>
+          <path d="M11 0 L11 11" stroke="#854d0e" stroke-width="0.7"/>
         </pattern>
         <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#4ade80" />
         </marker>
-        <marker id="arrow-white" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" />
-        </marker>
       </defs>
 
-      <!-- Natural Ground line -->
-      <line x1="20" y1="90" x2="530" y2="90" stroke="#4ade80" stroke-width="2" stroke-dasharray="6,3"/>
-      <text x="25" y="82" fill="#4ade80" font-size="11" font-weight="bold">Денна поверхня ґрунту (±0.00)</text>
+      <!-- Ground Level -->
+      <line x1="15" y1="${yGround}" x2="535" y2="${yGround}" stroke="#4ade80" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="20" y="${yGround - 10}" fill="#4ade80" font-size="11" font-weight="bold">Денна поверхня ґрунту (±0.00)</text>
 
-      <!-- Excavation Pit contour -->
-      <polygon points="60,90 120,380 430,380 490,90" fill="#161e19" stroke="#314437" stroke-width="1.5"/>
+      <!-- Pit Excavation Contour -->
+      <polygon points="50,${yGround} 125,${yBot} 425,${yBot} 500,${yGround}" fill="#141c16" stroke="#2d3f33" stroke-width="1.5"/>
 
-      <!-- Floor drainage & pallets -->
-      <!-- Drainage sand -->
-      <rect x="120" y="365" width="310" height="15" fill="#eab308" opacity="0.3"/>
-      <!-- Pallets -->
-      <rect x="125" y="345" width="300" height="20" fill="#78350f" stroke="#b45309" stroke-width="1"/>
-      <text x="250" y="359" fill="#fde68a" font-size="10" text-anchor="middle">Піддони (h=14 см) + OSB</text>
+      <!-- Floor Drainage Layer -->
+      <rect x="125" y="${yBot - 12}" width="300" height="12" fill="#ca8a04" opacity="0.3"/>
 
-      <!-- Interior Room Space -->
-      <rect x="130" y="195" width="290" height="150" fill="none" stroke="#4ade80" stroke-dasharray="3,3" stroke-width="0.8"/>
-      <text x="275" y="275" fill="#a7f3d0" font-size="13" font-weight="bold" text-anchor="middle">
-        Внутрішній простір (H=${s.H_int}м, B=${s.W}м)
+      <!-- Floor Construction -->
+      <rect x="130" y="${yFloorTop}" width="290" height="${hFloorPx - 12}" fill="#78350f" stroke="#b45309" stroke-width="1"/>
+      <text x="275" y="${yFloorTop + (hFloorPx - 12)/2 + 4}" fill="#fde68a" font-size="10" font-weight="bold" text-anchor="middle">
+        ${floorName}
       </text>
 
-      <!-- Beds on Left (if applicable) -->
+      <!-- Room Boundary (Dashed) -->
+      <rect x="130" y="${yCeiling}" width="290" height="${hRoomPx}" fill="none" stroke="#4ade80" stroke-dasharray="3,3" stroke-width="0.8"/>
+
+      <!-- NATO Beds on Left (if present) -->
       ${s.beds_count > 0 ? `
-        <rect x="135" y="225" width="110" height="120" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="1.5"/>
-        <!-- 2 tier bed lines -->
-        <line x1="135" y1="285" x2="245" y2="285" stroke="#38bdf8" stroke-width="2"/>
-        <line x1="135" y1="340" x2="245" y2="340" stroke="#38bdf8" stroke-width="2"/>
-        <text x="190" y="275" fill="#38bdf8" font-size="10" text-anchor="middle">НАТО Ліжко (2.1м)</text>
+        <rect x="135" y="${yCeiling + hRoomPx*0.2}" width="105" height="${hRoomPx*0.78}" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="1.5"/>
+        <line x1="135" y1="${yCeiling + hRoomPx*0.55}" x2="240" y2="${yCeiling + hRoomPx*0.55}" stroke="#38bdf8" stroke-width="2"/>
+        <line x1="135" y1="${yCeiling + hRoomPx*0.95}" x2="240" y2="${yCeiling + hRoomPx*0.95}" stroke="#38bdf8" stroke-width="2"/>
+        <text x="187" y="${yCeiling + hRoomPx*0.48}" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">Ліжко NATO (2.1м)</text>
       ` : ''}
 
-      <!-- Posts -->
+      <!-- Clean Room Dimension Box in Corridor (NO OVERLAP) -->
+      <g>
+        <rect x="252" y="${yCeiling + hRoomPx*0.42}" width="165" height="34" rx="6" fill="#101612" stroke="#4ade80" stroke-width="1"/>
+        <text x="334" y="${yCeiling + hRoomPx*0.42 + 15}" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">
+          Внутрішній простір
+        </text>
+        <text x="334" y="${yCeiling + hRoomPx*0.42 + 27}" fill="#94a398" font-size="9" text-anchor="middle">
+          H=${s.H_int}м | B=${s.W}м | Прохід ${s.corridor_width.toFixed(1)}м
+        </text>
+      </g>
+
+      <!-- Support Posts -->
       ${s.support_scheme === 'asymmetric' ? `
-        <!-- Left Post -->
-        <rect x="250" y="195" width="14" height="150" fill="#b45309" stroke="#d97706" stroke-width="1"/>
-        <!-- Right Post -->
-        <rect x="360" y="195" width="14" height="150" fill="#b45309" stroke="#d97706" stroke-width="1"/>
-        <text x="257" y="320" fill="#fed7aa" font-size="9" transform="rotate(-90 257 320)">Стійка ліва</text>
-        <text x="367" y="320" fill="#fed7aa" font-size="9" transform="rotate(-90 367 320)">Стійка права</text>
+        <rect x="245" y="${yCeiling}" width="14" height="${hRoomPx}" fill="#b45309" stroke="#d97706" stroke-width="1"/>
+        <rect x="365" y="${yCeiling}" width="14" height="${hRoomPx}" fill="#b45309" stroke="#d97706" stroke-width="1"/>
+        <text x="252" y="${yCeiling + hRoomPx - 10}" fill="#fed7aa" font-size="8" transform="rotate(-90 252 ${yCeiling + hRoomPx - 10})">Стійка ліва</text>
+        <text x="372" y="${yCeiling + hRoomPx - 10}" fill="#fed7aa" font-size="8" transform="rotate(-90 372 ${yCeiling + hRoomPx - 10})">Стійка права</text>
       ` : s.support_scheme === 'center' ? `
-        <rect x="270" y="195" width="16" height="150" fill="#b45309" stroke="#d97706" stroke-width="1"/>
-        <text x="278" y="320" fill="#fed7aa" font-size="9" transform="rotate(-90 278 320)">Центральна стійка</text>
+        <rect x="270" y="${yCeiling}" width="16" height="${hRoomPx}" fill="#b45309" stroke="#d97706" stroke-width="1"/>
+        <text x="278" y="${yCeiling + hRoomPx - 10}" fill="#fed7aa" font-size="8" transform="rotate(-90 278 ${yCeiling + hRoomPx - 10})">Центр. стійка</text>
       ` : ''}
 
-      <!-- Roof Layers -->
+      <!-- ROOF LAYERS (Bottom to Top) -->
       <!-- 1st Roll (Log layer 1) -->
       <g>
         ${Array.from({length: 18}).map((_, i) => 
-          `<circle cx="${130 + i * 17}" cy="185" r="8" fill="#b45309" stroke="#78350f" stroke-width="1"/>`
+          `<circle cx="${133 + i * 16.5}" cy="${yCeiling - 10}" r="8" fill="#b45309" stroke="#78350f" stroke-width="1"/>`
         ).join('')}
-        <text x="430" y="188" fill="#fed7aa" font-size="10">1-й накат (∅${s.d1_cm} см)</text>
+        <text x="435" y="${yCeiling - 6}" fill="#fed7aa" font-size="9" font-weight="bold">1-й накат (∅${s.d1_cm} см)</text>
       </g>
+    `;
 
-      <!-- Inter layer soil -->
-      ${s.log_layers === 2 ? `
-        <rect x="115" y="160" width="320" height="16" fill="url(#pat_soil)"/>
-        <!-- 2nd Roll -->
+    let currentRoofY = yCeiling - 18;
+
+    // 2nd Roll & Inter-soil (if log_layers == 2)
+    if (s.log_layers === 2) {
+      const hInter = Math.max(10, (s.inter_soil_cm / 100) * scale);
+      svgHtml += `
+        <rect x="120" y="${currentRoofY - hInter}" width="310" height="${hInter}" fill="url(#pat_soil)"/>
+      `;
+      currentRoofY -= hInter;
+
+      svgHtml += `
         <g>
           ${Array.from({length: 18}).map((_, i) => 
-            `<circle cx="${130 + i * 17}" cy="150" r="8" fill="#d97706" stroke="#78350f" stroke-width="1"/>`
+            `<circle cx="${133 + i * 16.5}" cy="${currentRoofY - 10}" r="8" fill="#d97706" stroke="#78350f" stroke-width="1"/>`
           ).join('')}
-          <text x="430" y="153" fill="#fed7aa" font-size="10">2-й накат (∅${s.d2_cm} см)</text>
+          <text x="435" y="${currentRoofY - 6}" fill="#fed7aa" font-size="9" font-weight="bold">2-й накат (∅${s.d2_cm} см)</text>
         </g>
-      ` : ''}
-
-      <!-- Sandbags -->
-      ${s.sandbag_layers > 0 ? `
-        <rect x="110" y="${s.log_layers === 2 ? 125 : 160}" width="330" height="18" fill="url(#pat_sandbags)"/>
-        <text x="430" y="${s.log_layers === 2 ? 138 : 173}" fill="#fde68a" font-size="10">Мішки з піском (${s.sandbag_layers} шар)</text>
-      ` : ''}
-
-      <!-- Top Soil Cover -->
-      <rect x="100" y="90" width="350" height="${(s.log_layers === 2 ? 125 : 160) - 90}" fill="#78350f" opacity="0.85"/>
-      <text x="275" y="110" fill="#fef08a" font-size="11" font-weight="bold" text-anchor="middle">
-        Маскувальний шар ґрунту (h=${s.soil_cover_cm} см)
-      </text>
-
-      <!-- Vertical Dimension Line (Total Pit Depth) -->
-      <line x1="45" y1="90" x2="45" y2="380" stroke="#4ade80" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
-      <rect x="10" y="225" width="70" height="22" rx="4" fill="#1b241e" stroke="#4ade80" stroke-width="1"/>
-      <text x="45" y="240" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle">H=${s.pit_depth_m.toFixed(2)}м</text>
-    `;
-  }
-
-  function renderTopPlanSVG() {
-    const svg = document.getElementById('svg_top_plan');
-    const s = calcState;
-    if (!s.W) return;
-
-    svg.innerHTML = `
-      <!-- Pit Top Border (Outer) -->
-      <rect x="30" y="20" width="490" height="220" fill="#18231c" stroke="#314437" stroke-width="1" stroke-dasharray="4,2"/>
-      <text x="35" y="35" fill="#95a59a" font-size="10">Верхня брівка котловану (${s.pit_top_w.toFixed(1)} × ${s.pit_top_l.toFixed(1)} м)</text>
-
-      <!-- Dugout Walls (Inner) -->
-      <rect x="75" y="50" width="400" height="160" fill="#121814" stroke="#4ade80" stroke-width="2"/>
-      <text x="85" y="66" fill="#4ade80" font-size="11" font-weight="bold">Бліндаж ${s.W} × ${s.L} м</text>
-
-      <!-- NATO Beds along top wall -->
-      ${Array.from({length: Math.min(6, s.beds_count)}).map((_, i) => `
-        <rect x="${110 + i * 55}" y="52" width="48" height="75" fill="rgba(56,189,248,0.2)" stroke="#38bdf8" stroke-width="1"/>
-        <text x="${134 + i * 55}" y="95" fill="#38bdf8" font-size="9" text-anchor="middle">Ліжко ${i+1}</text>
-      `).join('')}
-
-      <!-- Support Lines -->
-      ${s.support_scheme === 'asymmetric' ? `
-        <!-- Left girder line (along bed foot) -->
-        <line x1="90" y1="132" x2="455" y2="132" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4"/>
-        <text x="460" y="136" fill="#f59e0b" font-size="9">Прогін 1</text>
-
-        <!-- Right girder line -->
-        <line x1="90" y1="175" x2="455" y2="175" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4"/>
-        <text x="460" y="179" fill="#f59e0b" font-size="9">Прогін 2</text>
-
-        <!-- Posts dots -->
-        ${Array.from({length: Math.ceil(s.L / s.post_step) + 1}).map((_, i) => `
-          <circle cx="${95 + i * (350 / (s.L / s.post_step))}" cy="132" r="4" fill="#ef4444" stroke="#fff" stroke-width="1"/>
-          <circle cx="${95 + i * (350 / (s.L / s.post_step))}" cy="175" r="4" fill="#ef4444" stroke="#fff" stroke-width="1"/>
-        `).join('')}
-
-        <!-- Corridor annotation -->
-        <text x="275" y="158" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">
-          Вільний прохід (${s.corridor_width.toFixed(1)} м)
-        </text>
-      ` : s.support_scheme === 'center' ? `
-        <line x1="90" y1="130" x2="455" y2="130" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4"/>
-        ${Array.from({length: Math.ceil(s.L / s.post_step) + 1}).map((_, i) => `
-          <circle cx="${95 + i * (350 / (s.L / s.post_step))}" cy="130" r="4" fill="#ef4444" stroke="#fff" stroke-width="1"/>
-        `).join('')}
-        <text x="460" y="134" fill="#f59e0b" font-size="9">Центр. прогін</text>
-      ` : ''}
-
-      <!-- Entrance on Left -->
-      <polygon points="75,140 50,140 50,170 75,170" fill="#314437" stroke="#4ade80" stroke-width="1.5"/>
-      <text x="62" y="185" fill="#4ade80" font-size="9" text-anchor="middle">Вхід/Зумпф</text>
-
-      <!-- Ventilation Shafts -->
-      <circle cx="95" cy="65" r="6" fill="#38bdf8" stroke="#fff" stroke-width="1"/>
-      <text x="95" y="55" fill="#38bdf8" font-size="8" text-anchor="middle">Приплив</text>
-
-      <circle cx="455" cy="65" r="6" fill="#ef4444" stroke="#fff" stroke-width="1"/>
-      <text x="455" y="55" fill="#ef4444" font-size="8" text-anchor="middle">Витяжка 1</text>
-
-      <circle cx="455" cy="195" r="6" fill="#ef4444" stroke="#fff" stroke-width="1"/>
-      <text x="455" y="208" fill="#ef4444" font-size="8" text-anchor="middle">Витяжка 2</text>
-    `;
-  }
-
-  function updateBOMTable() {
-    const s = calcState;
-    const tbody = document.getElementById('bom_tbody');
-    if (!s.W || !tbody) return;
-
-    // Calculations for BOM items:
-    // 1. Logs layer 1
-    const log1_len = s.W + 1.0; // 0.5m overlap on each wall
-    const log1_pcs = Math.ceil(s.L / (s.d1_cm / 100));
-    const r1 = (s.d1_cm / 200);
-    const log1_vol = log1_pcs * Math.PI * r1 * r1 * log1_len;
-
-    // 2. Logs layer 2
-    let log2_len = 0, log2_pcs = 0, log2_vol = 0;
-    if (s.log_layers === 2) {
-      log2_len = s.L + 1.0; // longitudinal layout for 2nd layer
-      log2_pcs = Math.ceil(s.W / (s.d2_cm / 100));
-      const r2 = (s.d2_cm / 200);
-      log2_vol = log2_pcs * Math.PI * r2 * r2 * log2_len;
+      `;
+      currentRoofY -= 18;
     }
 
-    // 3. Beams (longitudinal girders)
-    const beam_len = s.L;
+    // Waterproofing Membrane line
+    svgHtml += `
+      <line x1="95" y1="${currentRoofY - 2}" x2="455" y2="${currentRoofY - 2}" stroke="#38bdf8" stroke-width="2"/>
+      <text x="435" y="${currentRoofY - 4}" fill="#38bdf8" font-size="8">Гідроізоляція (випуск 1м)</text>
+    `;
+    currentRoofY -= 4;
+
+    // Sandbags (ONLY if sandbag_layers > 0)
+    if (s.sandbag_layers > 0) {
+      const hSandPx = Math.max(12, s.roof_sandbags_m * scale);
+      svgHtml += `
+        <rect x="110" y="${currentRoofY - hSandPx}" width="330" height="${hSandPx}" fill="url(#pat_sandbags)"/>
+        <text x="435" y="${currentRoofY - hSandPx/2 + 3}" fill="#fde68a" font-size="9" font-weight="bold">Мішки з піском (${s.sandbag_layers} шар)</text>
+      `;
+      currentRoofY -= hSandPx;
+    }
+
+    // Top Soil Cover
+    const hCoverPx = Math.max(15, currentRoofY - yGround);
+    svgHtml += `
+      <rect x="95" y="${yGround}" width="360" height="${hCoverPx}" fill="#78350f" opacity="0.85"/>
+      <text x="275" y="${yGround + hCoverPx/2 + 4}" fill="#fef08a" font-size="10" font-weight="bold" text-anchor="middle">
+        Маскувальний шар ґрунту (h=${s.soil_cover_cm} см)
+      </text>
+    `;
+
+    // Pit Depth Arrow
+    svgHtml += `
+      <line x1="45" y1="${yGround}" x2="45" y2="${yBot}" stroke="#4ade80" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <rect x="8" y="${(yGround + yBot)/2 - 12}" width="74" height="24" rx="4" fill="#17211a" stroke="#4ade80" stroke-width="1"/>
+      <text x="45" y="${(yGround + yBot)/2 + 4}" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle">H=${s.pit_depth_m.toFixed(2)}м</text>
+    `;
+
+    svg.innerHTML = svgHtml;
+
+    // Dynamic Legend (Strictly matches displayed items)
+    let legendHtml = `
+      <div class="legend-item"><div class="legend-color" style="background:#4ade80;"></div>Денна поверхня</div>
+      <div class="legend-item"><div class="legend-color" style="background:#78350f;"></div>Маскувальний ґрунт</div>
+      <div class="legend-item"><div class="legend-color" style="background:#b45309;"></div>Накат колод (1 ${s.log_layers === 2 ? 'та 2' : ''})</div>
+      <div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div>Гідроізоляція</div>
+    `;
+    if (s.sandbag_layers > 0) {
+      legendHtml += `<div class="legend-item"><div class="legend-color" style="background:#ca8a04;"></div>Мішки з піском (${s.sandbag_layers} шар)</div>`;
+    }
+    if (s.beds_count > 0) {
+      legendHtml += `<div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div>Ліжка NATO (2.1м)</div>`;
+    }
+    legendHtml += `<div class="legend-item"><div class="legend-color" style="background:#b45309;"></div>${floorName}</div>`;
+
+    leg.innerHTML = legendHtml;
+  }
+
+  // 2. Machinery Status Rendering
+  function renderMachinery() {
+    const s = calcState;
+    const container = document.getElementById('machinery_cards_container');
+    if (!container || !s.pit_depth_m) return;
+
+    const cardsHtml = machineryDatabase.map(m => {
+      let isOk = false;
+      let isWarn = false;
+      let statusClass = "status-no";
+      let statusText = "Недостатня глибина";
+      let cardBorderClass = "not-suitable";
+
+      if (s.pit_depth_m <= m.maxDepthStd) {
+        isOk = true;
+        statusClass = "status-ok";
+        statusText = `✅ Підходить (${m.maxDepthStd} м)`;
+        cardBorderClass = "suitable";
+      } else if (s.pit_depth_m <= m.maxDepthTele) {
+        isWarn = true;
+        statusClass = "status-warn";
+        statusText = `⚠️ Потрібен телескоп (${m.maxDepthTele} м)`;
+        cardBorderClass = "warning-limit";
+      } else if (m.id === 'pzm_2') {
+        statusClass = "status-warn";
+        statusText = `⚠️ Тільки з уступом / докопуванням`;
+        cardBorderClass = "warning-limit";
+      }
+
+      return `
+        <div class="machine-card ${cardBorderClass}">
+          <div>
+            <div class="machine-header">
+              <span class="machine-title">${m.name}</span>
+              <span class="machine-status ${statusClass}">${statusText}</span>
+            </div>
+            <div style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;">${m.type}</div>
+          </div>
+          <div class="machine-desc">${m.desc}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); border-top:1px solid rgba(255,255,255,0.06); padding-top:6px;">
+            Макс. глибина: <b>${m.maxDepthStd} м</b> ${m.maxDepthTele > m.maxDepthStd ? `(телескоп <b>${m.maxDepthTele} м</b>)` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = cardsHtml;
+  }
+
+  // 3. Materials BOM Rendering (with separate Unedged and Edged Board volumes)
+  function renderBOM() {
+    const s = calcState;
+    const tbody = document.getElementById('bom_tbody');
+    if (!tbody || !s.W) return;
+
+    // 1. Logs 1st roll
+    const log1_len = s.W + 1.0; // 0.5m each side on ground
+    const log1_pcs = Math.ceil(s.L / (s.d1_cm / 100));
+    const log1_vol = log1_pcs * Math.PI * ((s.d1_cm / 200)**2) * log1_len;
+
+    // 2. Logs 2nd roll
+    let log2_pcs = 0, log2_vol = 0, log2_len = 0;
+    if (s.log_layers === 2) {
+      log2_len = s.L + 1.0;
+      log2_pcs = Math.ceil(s.W / (s.d2_cm / 100));
+      log2_vol = log2_pcs * Math.PI * ((s.d2_cm / 200)**2) * log2_len;
+    }
+
+    // 3. Beams
     const beam_lines = s.support_scheme === 'asymmetric' ? 2 : (s.support_scheme === 'center' ? 1 : 0);
-    const r_b = (s.beam_diam_cm / 200);
-    const beam_vol = beam_lines * Math.PI * r_b * r_b * beam_len;
+    const beam_vol = beam_lines * Math.PI * ((s.beam_diam_cm / 200)**2) * s.L;
 
-    // 4. Vertical Posts
-    const post_len = s.H_int + 0.3; // +30cm sunk into ground/sole
-    const r_p = (s.post_diam_cm / 200);
-    const post_vol = s.total_posts * Math.PI * r_p * r_p * post_len;
+    // 4. Posts (H_int + 0.5m embedded in ground per manual)
+    const post_len = s.H_int + 0.5;
+    const post_vol = s.total_posts * Math.PI * ((s.post_diam_cm / 200)**2) * post_len;
 
-    // 5. Wall Revetment (Одяг крутостей)
+    // 5. Wall posts
     const wall_perimeter = 2 * (s.W + s.L);
-    const wall_area = wall_perimeter * s.H_int;
-    const wall_boards_vol = wall_area * 0.03 * 1.15; // 30mm thickness + 15% waste
-
-    // Wall posts
     const wall_posts_count = Math.ceil(wall_perimeter / 1.0); // every 1 meter
-    const wall_posts_vol = wall_posts_count * Math.PI * (0.08**2) * (s.H_int + 0.5);
+    const wall_posts_vol = wall_posts_count * Math.PI * (0.075**2) * (s.H_int + 0.5);
 
-    // 6. Pallets
-    const pallet_w = 1.2, pallet_h = 0.8;
-    const area_floor = s.W * s.L;
-    const pallets_count = s.floor_pallets_cm > 0 ? Math.ceil((area_floor / (pallet_w * pallet_h)) * 1.05) : 0;
+    // TOTAL ROUND LOGS
+    const total_round_wood_vol = log1_vol + log2_vol + beam_vol + post_vol + wall_posts_vol;
 
-    // 7. OSB Sheets (2.5 x 1.25 m = 3.125 m2)
-    const osb_sheets = s.floor_finish_cm === 2 ? Math.ceil((area_floor / 3.125) * 1.10) : 0;
-    const floor_boards_vol = s.floor_finish_cm === 3 ? (area_floor * 0.035 * 1.15) : 0;
+    // 6. UNEDGED BOARDS (Дошка необрізна для стін / одягу крутостей)
+    const wall_area = wall_perimeter * s.H_int;
+    const unedged_board_vol = wall_area * 0.028 * 1.15; // 28mm thickness + 15% waste
 
-    // 8. Waterproofing (Плівка / Руберойд)
-    const hydro_area = Math.ceil((s.W + 2.0) * (s.L + 2.0) * 1.25); // with 1m margins and overlap
+    // 7. EDGED BOARDS (Дошка обрізна чистова)
+    // a) Floor (if board option)
+    const floor_board_vol = s.floor_finish === 'board' ? (s.W * s.L * 0.04 * 1.10) : 0;
+    // b) Stairs (50mm board per manual)
+    const stairs_board_vol = 0.25; // ~5 steps + stringers
+    // c) Doors (2 doors per manual)
+    const doors_board_vol = 0.30;  // 2 heavy timber doors 40-50mm with frames
+    const total_edged_board_vol = floor_board_vol + stairs_board_vol + doors_board_vol;
 
-    // 9. Sandbags
-    const sandbag_area = 0.5 * 0.3; // 0.15 m2 per bag
-    const sandbags_count = s.sandbag_layers > 0 ? Math.ceil((area_floor / sandbag_area) * s.sandbag_layers) : 0;
+    // 8. Pallets & OSB
+    const pallets_count = s.floor_pallets_cm > 0 ? Math.ceil(((s.W * s.L) / (1.2 * 0.8)) * 1.05) : 0;
+    const osb_sheets = s.floor_finish === 'osb' ? Math.ceil(((s.W * s.L) / 3.125) * 1.10) : 0;
 
-    // 10. Hardware (Скоби, цвяхи)
-    const cramps_count = (s.total_posts * 4) + Math.ceil(log1_pcs * 0.75) + 30; // 4 per post + logs ties
-    const nails_kg = Math.ceil(area_floor * 0.3 + wall_area * 0.2);
+    // 9. Waterproofing (Roof with 1m margin + wall wrap)
+    const roof_film_area = (s.W + 2.0) * (s.L + 2.0);
+    const total_film_area = Math.ceil((roof_film_area + wall_area) * 1.20);
+
+    // 10. Sandbags
+    const sandbags_count = s.sandbag_layers > 0 ? Math.ceil(((s.W * s.L) / 0.15) * s.sandbag_layers) : 0;
+
+    // 11. Hardware
+    const cramps_count = (s.total_posts * 4) + Math.ceil(log1_pcs * 0.8) + (beam_lines * 6) + 20;
+    const nails_200_kg = Math.ceil(s.total_posts * 0.5 + (beam_lines * 4) + (log1_pcs * 0.2) + 15);
+    const nails_100_kg = Math.ceil(wall_area * 0.25 + (s.floor_finish === 'board' ? s.W * s.L * 0.25 : 10) + 10);
+
+    // Update Quick Highlight Box
+    document.getElementById('bom_stat_logs').innerHTML = `${total_round_wood_vol.toFixed(1)} <small>м³</small>`;
+    document.getElementById('bom_stat_unedged').innerHTML = `${unedged_board_vol.toFixed(2)} <small>м³</small>`;
+    document.getElementById('bom_stat_edged').innerHTML = `${total_edged_board_vol.toFixed(2)} <small>м³</small>`;
+    document.getElementById('bom_stat_film').innerHTML = `${total_film_area} <small>м²</small>`;
 
     const items = [
-      { cat: "Круглий ліс", name: "Колоди 1-го накату", spec: `∅ ${s.d1_cm} см, довжина ${log1_len.toFixed(1)} м`, qty: log1_pcs, unit: "шт", vol: `${log1_vol.toFixed(2)} м³` },
-      ...(s.log_layers === 2 ? [{ cat: "Круглий ліс", name: "Колоди 2-го накату", spec: `∅ ${s.d2_cm} см, довжина ${log2_len.toFixed(1)} м`, qty: log2_pcs, unit: "шт", vol: `${log2_vol.toFixed(2)} м³` }] : []),
-      ...(beam_lines > 0 ? [{ cat: "Круглий ліс", name: "Поздовжні балки (прогони)", spec: `∅ ${s.beam_diam_cm} см, ліній ${beam_lines}, заг. довжина ${beam_lines * beam_len} м`, qty: beam_lines * Math.ceil(beam_len / 4.0), unit: "шт", vol: `${beam_vol.toFixed(2)} м³` }] : []),
-      ...(s.total_posts > 0 ? [{ cat: "Круглий ліс", name: "Опорні стійки (стовпи)", spec: `∅ ${s.post_diam_cm} см, висота ${post_len.toFixed(1)} м`, qty: s.total_posts, unit: "шт", vol: `${post_vol.toFixed(2)} м³` }] : []),
-      { cat: "Круглий ліс", name: "Стійки одягу крутостей", spec: `∅ 14–16 см, висота ${(s.H_int + 0.5).toFixed(1)} м`, qty: wall_posts_count, unit: "шт", vol: `${wall_posts_vol.toFixed(2)} м³` },
-      { cat: "Пиломатеріали", name: "Дошка обшивки стін", spec: `Обрізна/необрізна товщ. 25–30 мм (${wall_area.toFixed(0)} м²)`, qty: 1, unit: "компл", vol: `${wall_boards_vol.toFixed(2)} м³` },
+      { cat: "Круглий ліс", name: "Колоди 1-го накату (поперечні)", spec: `∅ ${s.d1_cm} см, довжина ${log1_len.toFixed(1)} м (випуск ≥0.5м)`, qty: log1_pcs, unit: "шт", vol: `${log1_vol.toFixed(2)} м³` },
+      ...(s.log_layers === 2 ? [{ cat: "Круглий ліс", name: "Колоди 2-го накату (поздовжні)", spec: `∅ ${s.d2_cm} см, довжина ${log2_len.toFixed(1)} м`, qty: log2_pcs, unit: "шт", vol: `${log2_vol.toFixed(2)} м³` }] : []),
+      ...(beam_lines > 0 ? [{ cat: "Круглий ліс", name: "Поздовжні балки (прогони)", spec: `∅ ${s.beam_diam_cm} см, ліній ${beam_lines}, сумарно ${beam_lines * s.L} пог. м`, qty: beam_lines * Math.ceil(s.L / 4.0), unit: "шт", vol: `${beam_vol.toFixed(2)} м³` }] : []),
+      ...(s.total_posts > 0 ? [{ cat: "Круглий ліс", name: "Опорні стійки каркаса", spec: `∅ ${s.post_diam_cm} см, L=${post_len.toFixed(1)} м (заглиблення ≥50 см)`, qty: s.total_posts, unit: "шт", vol: `${post_vol.toFixed(2)} м³` }] : []),
+      { cat: "Круглий ліс", name: "Стійки одягу крутостей (стін)", spec: `∅ 14–16 см, крок 1.0 м, висота ${(s.H_int + 0.5).toFixed(1)} м`, qty: wall_posts_count, unit: "шт", vol: `${wall_posts_vol.toFixed(2)} м³` },
+
+      // UNEDGED BOARDS
+      { cat: "Пиломатеріали", name: "Дошка НЕОБРІЗНА (для стін)", spec: `Товщина 25–30 мм, площа обшивки ${wall_area.toFixed(0)} м²`, qty: 1, unit: "компл", vol: `<b>${unedged_board_vol.toFixed(2)} м³</b>` },
+
+      // EDGED BOARDS
+      { cat: "Пиломатеріали", name: "Дошка ОБРІЗНА (підлога, сходи, 2 дверей)", spec: `Товщ. 40–50 мм (підлога: ${floor_board_vol.toFixed(2)}м³, сходи: 0.25м³, 2 дверей: 0.30м³)`, qty: 1, unit: "компл", vol: `<b>${total_edged_board_vol.toFixed(2)} м³</b>` },
+
       ...(pallets_count > 0 ? [{ cat: "Підлога", name: "Піддони дерев'яні", spec: "Стандартні європіддони 1200×800 мм", qty: pallets_count, unit: "шт", vol: "-" }] : []),
       ...(osb_sheets > 0 ? [{ cat: "Підлога", name: "Листи OSB-3 вологостійкі", spec: "2500×1250×18 мм (3.125 м²/лист)", qty: osb_sheets, unit: "листів", vol: "-" }] : []),
-      ...(floor_boards_vol > 0 ? [{ cat: "Підлога", name: "Дошка настилу підлоги", spec: "Товщина 35–40 мм", qty: 1, unit: "компл", vol: `${floor_boards_vol.toFixed(2)} м³` }] : []),
-      { cat: "Ізоляція", name: "Гідроізоляційна плівка / руберойд", spec: "Рулони, товщина ≥200 мкм (з нахлестом)", qty: hydro_area, unit: "м²", vol: `${Math.ceil(hydro_area / 50)} рул` },
-      ...(sandbags_count > 0 ? [{ cat: "Захист", name: "Мішки поліпропіленові з піском", spec: "55×105 см (укладання з перев'язкою)", qty: sandbags_count, unit: "шт", vol: `~${Math.round(sandbags_count * 0.035)} т` }] : []),
-      { cat: "Кріплення", name: "Скоби будівельні ковані", spec: "Діаметр 8–10 мм, довжина 25–30 см", qty: cramps_count, unit: "шт", vol: "-" },
-      { cat: "Кріплення", name: "Цвяхи / саморізи", spec: "Цвяхи 100–150 мм для каркаса й настилу", qty: nails_kg, unit: "кг", vol: "-" },
-      { cat: "Вентиляція", name: "Труби вентиляційні", spec: "Пластикові/сталеві ∅ 150–200 мм з дефлекторами", qty: s.exhaust_vents + s.intake_vents, unit: "компл", vol: "-" }
+
+      { cat: "Ізоляція", name: "Плівка гідроізоляційна (≥200 мкм) / руберойд", spec: `Покрівля з напуском 1м + обтяжка стін по колу (за СВП)`, qty: total_film_area, unit: "м²", vol: `${Math.ceil(total_film_area / 50)} рул` },
+      { cat: "Ізоляція", name: "Тепловідбивний екран на стелю", spec: `Фольгований пінополіетилен (СВП 3-00(51)238 п. 16)`, qty: Math.ceil(s.W * s.L), unit: "м²", vol: "-" },
+
+      ...(sandbags_count > 0 ? [{ cat: "Захист", name: "Мішки з піском", spec: `55×105 см (${s.sandbag_layers} шар, цегляна кладка)`, qty: sandbags_count, unit: "шт", vol: `~${Math.round(sandbags_count * 0.035)} т` }] : []),
+
+      { cat: "Кріплення", name: "Скоби будівельні ковані", spec: "Діаметр 8–10 мм, довжина 250–300 мм", qty: cramps_count, unit: "шт", vol: "-" },
+      { cat: "Кріплення", name: "Цвяхи будівельні 200 мм", spec: "Для фіксації балок, стійок, накатів (за СВП)", qty: nails_200_kg, unit: "кг", vol: "-" },
+      { cat: "Кріплення", name: "Цвяхи будівельні 100–120 мм", spec: "Для обшивки стін дошкою, підлоги, дверей", qty: nails_100_kg, unit: "кг", vol: "-" },
+
+      { cat: "Вентиляція", name: "Труба припливна (∅ 100 мм)", spec: "Встановлюється на висоті 50 см від підлоги (п. 16 СВП)", qty: s.intake_vents, unit: "компл", vol: "-" },
+      { cat: "Вентиляція", name: "Труба витяжна (∅ 100–200 мм)", spec: "Встановлюється під стелею з дефлектором (п. 16 СВП)", qty: s.exhaust_vents, unit: "компл", vol: "-" }
     ];
 
     tbody.innerHTML = items.map(it => `
@@ -1594,75 +1346,195 @@
         <td>${it.vol}</td>
       </tr>
     `).join('');
+
+    calcState.bomItems = items;
+    calcState.totalRoundWoodVol = total_round_wood_vol;
+    calcState.unedgedBoardVol = unedged_board_vol;
+    calcState.totalEdgedBoardVol = total_edged_board_vol;
+  }
+
+  // 4. Algorithm with specific materials on each stage
+  function renderAlgorithm() {
+    const s = calcState;
+    const container = document.getElementById('algorithm_steps_container');
+    if (!container || !s.W) return;
+
+    const log1_pcs = Math.ceil(s.L / (s.d1_cm / 100));
+    const log2_pcs = s.log_layers === 2 ? Math.ceil(s.W / (s.d2_cm / 100)) : 0;
+    const wall_perimeter = 2 * (s.W + s.L);
+    const wall_posts_count = Math.ceil(wall_perimeter / 1.0);
+    const beam_lines = s.support_scheme === 'asymmetric' ? 2 : (s.support_scheme === 'center' ? 1 : 0);
+
+    const steps = [
+      {
+        num: "1",
+        title: "Етап 1: Інженерна розвідка та виносна розмітка осей",
+        equipment: "Шнур поліпропіленовий 4–6 мм (100 м), рулетка 30–50 м, лазерний нівелір/рівень, сокири, маркувальна фарба/крейда.",
+        materials: [
+          `Кілочки дерев'яні розмічальні: <b>24 шт</b> (виносні на відступі ${s.stake_offset} м)`,
+          `Шнур розмічальний: <b>1 бухта (100 м)</b>`
+        ],
+        tasks: [
+          `Перевірити відсутність ґрунтових вод та обрати зворотний схил або складку місцевості.`,
+          `Розмітити габарити верху котловану (${s.pit_top_w.toFixed(2)} × ${s.pit_top_l.toFixed(2)} м) з урахуванням укосу для ${s.soil_type === 'sand' ? 'піску (1:1.0)' : (s.soil_type === 'clay' ? 'глини (1:0.5)' : 'суглинку (1:0.67)')}.`,
+          `<b>Контроль прямокутності:</b> Виміряти діагоналі верху. Вони мають бути строго рівні <b>${s.pit_top_diag.toFixed(2)} м</b>.`,
+          `Забити виносні кілочки на віддалі <b>${s.stake_offset} м</b> від брівки (контур ${s.stakes_w.toFixed(2)} × ${s.stakes_l.toFixed(2)} м, діагональ <b>${s.stakes_diag.toFixed(2)} м</b>).`
+        ]
+      },
+      {
+        num: "2",
+        title: "Етап 2: Механізована виїмка котловану та профіль дна",
+        equipment: `Екскаватор JCB 3CX / JCB 4CX / Case S580SM2 / ПЗМ-2 (з телескопом для глибини ${s.pit_depth_m.toFixed(2)} м), лопати штикові та совкові.`,
+        materials: [
+          `Щебінь або пісок для зумпфа: <b>0.5 м³</b>`,
+          `Перфорована бочка або ящик під зумпф: <b>1 шт (80×80×80 см)</b>`,
+          `Занурювальний дренажний насос із шлангом: <b>1 компл</b>`
+        ],
+        tasks: [
+          `Екскаватором розкопати котлован на глибину до <b>${(s.pit_depth_m - 0.25).toFixed(2)} м</b> з недобором 20–25 см.`,
+          `Складувати відвал ґрунту на відстані не ближче 1.5–2.0 м від брівки.`,
+          `Вручну зачистити дно до проєктної глибини <b>${s.pit_depth_m.toFixed(2)} м</b> (розміри по дну ${s.pit_bot_w.toFixed(2)} × ${s.pit_bot_l.toFixed(2)} м, діагональ <b>${s.pit_bot_diag.toFixed(2)} м</b>).`,
+          `Сформувати ухил дна 0.025 (перепад <b>${s.water_drop_cm} см</b>) у бік входу та викопати зумпф 80×80×80 см.`
+        ]
+      },
+      {
+        num: "3",
+        title: "Етап 3: Одяг крутостей (стіни) та дренажна подушка підлоги",
+        equipment: "Бензопили, кувалди, молотки, ніж монтажний.",
+        materials: [
+          `Стійки одягу крутостей (кругляк ∅ 14–16 см, L=${(s.H_int + 0.5).toFixed(1)} м): <b>${wall_posts_count} шт</b>`,
+          `<b>Дошка НЕОБРІЗНА (для стін): ${(s.unedgedBoardVol || 2.3).toFixed(2)} м³</b> (товщина 25–30 мм)`,
+          `Плівка гідроізоляційна (для обтяжки стін по колу за СВП): <b>~${Math.round(wall_perimeter * s.H_int * 1.15)} м²</b>`,
+          `Цвяхи будівельні 100–120 мм: <b>~15 кг</b>`,
+          `Пісок / щебінь для дренажної подушки (шар ${s.floor_drain_cm} см): <b>~${(s.W * s.L * s.floor_drain_cm/100).toFixed(1)} м³</b>`
+        ],
+        tasks: [
+          `Встановити стійки одягу крутостей з кроком 1.0 м уздовж усіх стін (заглиблення на 50 см).`,
+          `Завести дошку необрізну за вертикальні стовпи із обов'язковим заведенням плівки з боку ґрунту (п. 4, 5 методички).`,
+          `Засипати протилежні сторони пазух ґрунтом/піском одночасно, щоб уникнути перекосу каркаса.`,
+          `Відсипати та утрамбувати дренажну щебеневу подушку завтовшки ${s.floor_drain_cm} см по дну.`
+        ]
+      },
+      {
+        num: "4",
+        title: "Етап 4: Монтаж силового каркаса (стійки та прогони)",
+        equipment: "Бензопили для зарізів у півдерева, сокири теслярські, молотки важкі.",
+        materials: [
+          s.total_posts > 0 ? `Опорні стійки каркаса (кругляк ∅ ${s.post_diam_cm} см, L=${(s.H_int + 0.5).toFixed(1)} м): <b>${s.total_posts} шт</b> (закопування на ≥50 см за СВП)` : `Без опор`,
+          beam_lines > 0 ? `Поздовжні балки/прогони (кругляк ∅ ${s.beam_diam_cm} см): <b>${beam_lines * Math.ceil(s.L / 4.0)} шт</b> (${beam_lines * s.L} пог. м)` : `—`,
+          `Опорні лежні (підкладки під стійки з плах 50 мм): <b>${s.total_posts} шт</b>`,
+          `Скоби будівельні ковані 250–300 мм: <b>${s.total_posts * 4 + beam_lines * 6} шт</b>`,
+          `Цвяхи будівельні 200 мм: <b>~15 кг</b>`
+        ],
+        tasks: [
+          s.support_scheme === 'asymmetric' 
+            ? `Розмітити ліву лінію стійок на відстані 2.10 м від стіни (впритул до ліжок) та праву лінію на відстані ${(s.W - 2.1 - s.corridor_width).toFixed(2)} м (залишає вільний коридор ${s.corridor_width.toFixed(1)} м).`
+            : `Розмітити центральну вісь опор рівно по центру котловану.`,
+          `Закопати опорні стовпи на глибину не менше 50 см з укладанням опорних лежнів на дно (п. 1 методички).`,
+          `У балках зробити зарізи в місцях приєднання до стовпів. Зафіксувати скобами та цвяхами 200 мм (п. 2, 3 методички).`
+        ]
+      },
+      {
+        num: "5",
+        title: "Етап 5: Зведення захисного перекриття (накати, ізоляція, мішки)",
+        equipment: "Бензопили, скобозабивні молотки, трамбовки ручні, відра/ноші для ґрунту.",
+        materials: [
+          `Колоди 1-го накату (поперечні, ∅ ${s.d1_cm} см, L=${(s.W + 1.0).toFixed(1)} м): <b>${log1_pcs} шт</b> (опирання на брівки ≥0.5м)`,
+          s.log_layers === 2 ? `Колоди 2-го накату (поздовжні, ∅ ${s.d2_cm} см, L=${(s.L + 1.0).toFixed(1)} м): <b>${log2_pcs} шт</b>` : `—`,
+          s.log_layers === 2 ? `Ґрунт демпферний між накатами (шар ${s.inter_soil_cm} см): <b>~${(s.W * s.L * s.inter_soil_cm/100).toFixed(1)} м³</b>` : `—`,
+          `Плівка гідроізоляційна (200 мкм) / руберойд: <b>~${Math.ceil((s.W+2.0)*(s.L+2.0)*1.25)} м²</b> (випуск на 1 м за стіни за СВП)`,
+          s.sandbag_layers > 0 ? `Мішки з піском (цегляна кладка): <b>${Math.ceil(((s.W * s.L)/0.15) * s.sandbag_layers)} шт</b> (~${Math.round(((s.W * s.L)/0.15) * s.sandbag_layers * 0.035)} т)` : `—`,
+          `Скоби будівельні: <b>~${Math.ceil(log1_pcs * 0.8) + 20} шт</b> | Цвяхи 200 мм: <b>~10 кг</b>`,
+          `Ґрунт маскувального шару (h=${s.soil_cover_cm} см): <b>~${(s.W * s.L * s.soil_cover_cm/100).toFixed(1)} м³</b>`
+        ],
+        tasks: [
+          `Укласти 1-й накат колод упоперек бліндажа з опиранням на материковий ґрунт не менше 0.5 м з кожного боку. Скріпити скобами.`,
+          s.log_layers === 2 ? `Засипати демпферний шар піску/ґрунту (${s.inter_soil_cm} см) та укласти 2-й накат колод уздовж споруди (п. 7 методички).` : `—`,
+          `Прорізати отвори під вентиляційні труби та димар буржуйки згідно з розміткою.`,
+          `Настелити гідроізоляційну плівку з напуском на відстань 1 м від стін бліндажа (п. 14 методички).`,
+          s.sandbag_layers > 0 ? `Укласти ${s.sandbag_layers} шари мішків із піском з перев'язкою швів.` : `—`,
+          `Засипати маскувальний шар ґрунту (50 см), задернувати та замаскувати гілками й лісовою підстилкою (п. 17 методички).`
+        ]
+      },
+      {
+        num: "6",
+        title: "Етап 6: Внутрішнє обладнання, підлога, тамбур та вентиляція",
+        equipment: "Шуруповерти, пили дискові, перфоратори, молотки.",
+        materials: [
+          s.floor_finish === 'board' 
+            ? `<b>Дошка ОБРІЗНА (чистова підлога 40 мм): ${(s.W * s.L * 0.04 * 1.10).toFixed(2)} м³</b>`
+            : `Піддони дерев'яні: <b>${Math.ceil(((s.W * s.L)/(1.2 * 0.8))*1.05)} шт</b> + Листи OSB-3: <b>${Math.ceil(((s.W * s.L)/3.125)*1.10)} шт</b>`,
+          `<b>Дошка ОБРІЗНА (для сходів 50 мм та 2 дверей): ~0.55 м³</b>`,
+          `Тепловідбивний фольгований екран на стелю: <b>${Math.ceil(s.W * s.L)} м²</b> (СВП п. 16)`,
+          `Труби вентиляційні: приплив ∅ 100 мм (<b>${s.intake_vents} шт</b>), витяжка ∅ 100–200 мм (<b>${s.exhaust_vents} шт</b>)`,
+          `Дверні блоки тамбура (2 шт за СВП 3-00(51)238): <b>2 компл</b>`,
+          s.beds_count > 0 ? `Двоярусні ліжка NATO (2.1 × 0.8 м): <b>${s.beds_count} блоків</b> (на ${s.beds_count * 2} чол)` : `—`
+        ],
+        tasks: [
+          `Змонтувати підлогу (піддони з OSB або чистова дошка 40 мм по лагах).`,
+          `Закріпити на стелю тепловідбивний екран (покращує світло й утримує тепло від буржуйки).`,
+          `Встановити припливну трубу (∅ 100 мм) на висоті 50 см від підлоги та витяжні труби (∅ 100–200 мм) під стелею (п. 16 методички).`,
+          `Обладнати сходовий спуск (дошка 50 мм або круглі зрізи деревини h=10 см з утрамбуванням) та встановити 2 дверей тамбура.`,
+          `Встановити двоярусні ліжка вздовж лівої стіни із забезпеченням вільного проходу ${s.corridor_width.toFixed(1)} м.`
+        ]
+      }
+    ];
+
+    container.innerHTML = steps.map(st => `
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-badge">${st.num}</div>
+          <div class="step-title">${st.title}</div>
+        </div>
+        <div class="step-body">
+          <div class="step-section">
+            <div class="step-sec-title">🚜 Техніка та інструменти:</div>
+            <div style="font-size: 0.85rem; color: #cbd5e1; margin-left: 4px;">${st.equipment}</div>
+          </div>
+
+          <div class="step-section">
+            <div class="step-sec-title">📦 Розраховані матеріали на цей етап:</div>
+            <div class="step-material-box">
+              <ul class="step-material-list">
+                ${st.materials.filter(m => m !== '—').map(m => `<li>• ${m}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-section">
+            <div class="step-sec-title">📋 Технологічні операції (згідно з СВП 3-00(51)238):</div>
+            <ul class="step-tasks-list">
+              ${st.tasks.filter(t => t !== '—').map(t => `<li>${t}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      </div>
+    `).join('');
   }
 
   function generateReport() {
     const s = calcState;
-    const text = `===============================================================
-ІНЖЕНЕРНИЙ ЗВІТ ТА СПЕЦИФІКАЦІЯ СПОРУДИ (FORTCALC PRO)
-===============================================================
-Дата розрахунку: ${new Date().toLocaleString('uk-UA')}
-Об'єкт: Польовий бліндаж / Укриття особового складу
-Внутрішні розміри приміщення: ${s.W} м (ширина) × ${s.L} м (довжина) × ${s.H_int} м (висота)
-Загальна площа приміщення: ${(s.W * s.L).toFixed(1)} м² | Об'єм: ${(s.W * s.L * s.H_int).toFixed(1)} м³
-Місткість: ${s.beds_count * 2} чол (${s.beds_count} двоярусних ліжок NATO 2.1×0.8 м)
-Ширина вільного проходу: ${s.corridor_width.toFixed(2)} м
-
----------------------------------------------------------------
-1. ВИСОТНІ ВІДМІТКИ ТА КОТЛОВАН
----------------------------------------------------------------
-* Повна проєктна глибина котловану: ${s.pit_depth_m.toFixed(2)} м
-* Висота конструкції підлоги: ${(s.floor_thick_total_m*100).toFixed(0)} см (підсипка ${s.floor_drain_cm}см + піддони ${s.floor_pallets_cm}см + OSB ${s.floor_finish_cm}см)
-* Чиста висота приміщення: ${s.H_int.toFixed(2)} м
-* Товщина захисного перекриття: ${s.total_roof_thick_m.toFixed(2)} м:
-  - 1-й накат колод: ∅ ${s.d1_cm} см
-  ${s.log_layers === 2 ? `- Демпферний шар ґрунту: ${s.inter_soil_cm} см
-  - 2-й накат колод: ∅ ${s.d2_cm} см` : ''}
-  ${s.sandbag_layers > 0 ? `- Мішки з піском: ${s.sandbag_layers} шар (${s.sandbag_cm} см)` : ''}
-  - Маскувальний шар ґрунту: ${s.soil_cover_cm} см
-* Розрахункове навантаження на перекриття: ${s.total_roof_load_t_m2.toFixed(2)} т/м²
-* Повна вага покрівлі над спорудою: ${s.total_roof_weight_tons.toFixed(1)} тонн
-
----------------------------------------------------------------
-2. ГЕОМЕТРІЯ РОЗМІТКИ ТА ЗЕМЛЯНІ РОБОТИ
----------------------------------------------------------------
-* Дно котловану (${s.pit_bot_w.toFixed(2)} × ${s.pit_bot_l.toFixed(2)} м): Діагональ = ${s.pit_bot_diag.toFixed(2)} м
-* Верхня брівка з укосом (${s.pit_top_w.toFixed(2)} × ${s.pit_top_l.toFixed(2)} м): Діагональ = ${s.pit_top_diag.toFixed(2)} м
-* Контур виносних кілочків (${s.stakes_w.toFixed(2)} × ${s.stakes_l.toFixed(2)} м, відступ ${s.stake_offset}м): Діагональ = ${s.stakes_diag.toFixed(2)} м
-* Орієнтовний об'єм виїмки ґрунту: ${Math.round(s.earth_volume)} м³
-
----------------------------------------------------------------
-3. СИЛОВА СХЕМА ТА ОПОРИ
----------------------------------------------------------------
-* Схема спирання: ${s.support_scheme === 'asymmetric' ? 'Дворядна асиметрична (під ліжка NATO)' : (s.support_scheme === 'center' ? 'Центральний прогін' : 'Без опор')}
-* Кількість опорних стійок: ${s.total_posts} шт (∅ ${s.post_diam_cm} см, крок ${s.post_step} м)
-* Поздовжні балки (прогони): ∅ ${s.beam_diam_cm} см, сумарно ${s.total_beam_length} пог. м
-* Максимальний нерозрізний проліт колод: ${s.max_span_m.toFixed(2)} м (безпечно)
-
----------------------------------------------------------------
-4. ІНЖЕНЕРНІ СИСТЕМИ
----------------------------------------------------------------
-* Ухил дна котловану: 0.025 (перепад ${s.water_drop_cm} см до входу)
-* Водозбірний зумпф: 80×80×80 см біля входу з дренажною помпою
-* Вентиляція: ${s.exhaust_vents} витяжні шахти (під стелею) + ${s.intake_vents} припливні канали (біля підлоги)
-
----------------------------------------------------------------
-5. ЗВЕДЕНА ВІДОМІСТЬ МАТЕРІАЛІВ (ОСНОВНЕ)
----------------------------------------------------------------
-${Array.from(document.querySelectorAll('#bom_tbody tr')).map(tr => {
-  const tds = tr.querySelectorAll('td');
-  return `• ${tds[1].innerText}: ${tds[3].innerText} ${tds[4].innerText} (${tds[2].innerText}) — ${tds[5].innerText}`;
-}).join('\n')}
-===============================================================`;
-
-    document.getElementById('report_content_text').innerText = text;
-  }
-
-  function copyReportText() {
-    const text = document.getElementById('report_content_text').innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      alert('✅ Звіт успішно скопійовано в буфер обміну!');
+    let text = `===============================================================\n`;
+    text += `ІНЖЕНЕРНИЙ ЗВІТ ТА СПЕЦИФІКАЦІЯ СПОРУДИ (FORTCALC PRO)\n`;
+    text += `Стандарт: Методичні рекомендації ЗСУ СВП 3-00(51)238\n`;
+    text += `Дата розрахунку: ${new Date().toLocaleString('uk-UA')}\n`;
+    text += `Габарити приміщення: ${s.W} м × ${s.L} м × ${s.H_int} м | Площа: ${(s.W*s.L).toFixed(1)} м²\n`;
+    text += `Повна глибина котловану: ${s.pit_depth_m.toFixed(2)} м | Навантаження: ${s.total_roof_load_t_m2.toFixed(1)} т/м² (${s.total_roof_weight_tons.toFixed(1)} т)\n`;
+    text += `---------------------------------------------------------------\n`;
+    text += `ПРИДАТНА ТЕХНІКА ДЛЯ РОЗКОПКИ (глибина ${s.pit_depth_m.toFixed(2)} м):\n`;
+    machineryDatabase.forEach(m => {
+      const ok = s.pit_depth_m <= m.maxDepthTele;
+      text += `* ${m.name}: ${ok ? 'ПІДХОДИТЬ' : 'НЕДОСТАТНЯ ГЛИБИНА'} (макс. ${m.maxDepthTele} м)\n`;
     });
+    text += `---------------------------------------------------------------\n`;
+    text += `ЗВЕДЕНА ВІДОМІСТЬ МАТЕРІАЛІВ:\n`;
+    if (s.bomItems) {
+      s.bomItems.forEach(it => {
+        text += `• ${it.name} (${it.cat}): ${it.qty} ${it.unit} [${it.vol}] — ${it.spec.replace(/<[^>]*>?/gm, '')}\n`;
+      });
+    }
+    text += `===============================================================`;
+    document.getElementById('report_content_text').innerText = text;
   }
 
   function copyBOMTable() {
@@ -1673,126 +1545,30 @@ ${Array.from(document.querySelectorAll('#bom_tbody tr')).map(tr => {
       tsv += cells.join("\t") + "\n";
     }
     navigator.clipboard.writeText(tsv).then(() => {
-      alert('✅ Таблицю матеріалів (BOM) скопійовано (можна вставити в Excel / Google Таблиці)!');
+      alert('✅ Таблицю матеріалів (BOM) скопійовано! Можна вставити в Excel або Google Таблиці.');
     });
-  }
-
-  // Initial calculation on load
-  
-  function renderAlgorithm() {
-    const s = calcState;
-    if (!s.pit_depth_m) return;
-
-    document.getElementById('alg_depth').innerText = s.pit_depth_m.toFixed(2);
-    document.getElementById('alg_dims').innerText = `${s.W.toFixed(1)} × ${s.L.toFixed(1)}`;
-    document.getElementById('alg_layers').innerText = s.log_layers;
-
-    const steps = [
-      {
-        num: "1",
-        title: "Рекогносцировка та виносна розмітка осей",
-        details: [
-          `Перевірка відсутності високих ґрунтових вод та оцінка природного рельєфу (бажано обирати зворотні схили висот).`,
-          `Натягування міцного плетеного шнура (4–6 мм). Розбивка контуру верху (${s.pit_top_w.toFixed(2)} × ${s.pit_top_l.toFixed(2)} м).`,
-          `<b>Контроль прямокутності:</b> Вимірювання діагоналі верху — повинна бути рівно <b>${s.pit_top_diag.toFixed(2)} м</b>.`,
-          `Забивання виносних кілочків на відстані <b>${s.stake_offset} м</b> від брівки (контур ${s.stakes_w.toFixed(2)} × ${s.stakes_l.toFixed(2)} м, діагональ <b>${s.stakes_diag.toFixed(2)} м</b>).`
-        ]
-      },
-      {
-        num: "2",
-        title: "Механізована виїмка котловану та профілювання дна",
-        details: [
-          `Розкопка екскаватором (ПЗМ-2 або гусеничний/колісний) на глибину до <b>${(s.pit_depth_m - 0.25).toFixed(2)} м</b> (з недобором 20–25 см).`,
-          `Ручна доробка та зачистка дна до проєктної глибини <b>${s.pit_depth_m.toFixed(2)} м</b>.`,
-          `Формування поздовжнього ухилу дна <b>0.025</b> у бік входу (перепад висот <b>${s.water_drop_cm} см</b>).`,
-          `Викопування водовідвідного зумпфа розміром <b>80 × 80 см і глибиною 80 см</b> у найнижчій точці біля вхідного тамбура.`
-        ]
-      },
-      {
-        num: "3",
-        title: "Влаштування одягу крутостей (стін) та дренажу підлоги",
-        details: [
-          `Встановлення пристінних опорних стійок (∅ 14–16 см) з кроком 1.0 м по периметру стін.`,
-          `Монтаж забірної дошки (25–30 мм) або обапола за стійки із прокладанням будівельної плівки для утримання ґрунту від осипання.`,
-          `Влаштування дренажної подушки по дну: шар піску/щебеню товщиною <b>${s.floor_drain_cm} см</b> з ретельним трамбуванням.`
-        ]
-      },
-      {
-        num: "4",
-        title: "Монтаж силового каркаса (опорні стійки та прогони)",
-        details: [
-          s.support_scheme === 'asymmetric' 
-            ? `Розмітка лівої лінії опор на відстані <b>2.10 м</b> від лівої стіни (впритул до ліжок NATO) та правої лінії опор на відстані <b>${(s.W - 2.1 - s.corridor_width).toFixed(2)} м</b> від правої стіни.`
-            : (s.support_scheme === 'center' ? `Розмітка центральної осі опор рівно посередині котловану (2.0 м від стін).` : `Без проміжних опор (проліт ${s.W} м дозволяє суцільне перекриття).`),
-          s.total_posts > 0 ? `Укладання опорних лежнів (підкладок із дошки 50 мм) для запобігання просіданню стійок у ґрунт.` : `Опирання здійснюється безпосередньо на материковий ґрунт брівок.`,
-          s.total_posts > 0 ? `Встановлення <b>${s.total_posts} опорних стійок</b> (∅ ${s.post_diam_cm} см) з кроком <b>${s.post_step} м</b>.` : `—`,
-          s.total_beam_length > 0 ? `Монтаж поздовжніх прогонів (балок ∅ ${s.beam_diam_cm} см) загальною довжиною <b>${s.total_beam_length} пог. м</b>. Фіксація кованими скобами (по 4 шт на кожне з'єднання).` : `—`
-        ]
-      },
-      {
-        num: "5",
-        title: "Укладання захисного перекриття (накатів)",
-        details: [
-          `Укладання <b>1-го поперечного накату</b> колод (∅ ${s.d1_cm} см, довжина ${(s.W + 1.0).toFixed(1)} м) з опиранням на брівки не менше ніж на 0.5 м з кожного боку. Скріплення скобами.`,
-          s.log_layers === 2 ? `Відсипка демпферного шару ґрунту/піску товщиною <b>${s.inter_soil_cm} см</b> поверх першого накату з ущільненням ручними трамбівками.` : `—`,
-          s.log_layers === 2 ? `Укладання <b>2-го поздовжнього накату</b> колод (∅ ${s.d2_cm} см).` : `—`,
-          `Настилання суцільної гідроізоляції (руберойд у 2 шари або плівка 200 мкм) із перехлестом смуг 20 см та випуском за краї котловану на 1.0 м.`,
-          s.sandbag_layers > 0 ? `Укладання мішків з піском (${s.sandbag_layers} шари, ~${Math.round(s.sandbag_layers * s.W * s.L / 0.15)} шт) із цегляною перев'язкою швів.` : `—`,
-          `Відсипка маскувального шару ґрунту товщиною <b>${s.soil_cover_cm} см</b>, дернування та відновлення фонового рельєфу.`
-        ]
-      },
-      {
-        num: "6",
-        title: "Внутрішнє оздоблення, системи та ліжка",
-        details: [
-          s.floor_pallets_cm > 0 ? `Укладання <b>${Math.ceil((s.W * s.L) / (1.2 * 0.8) * 1.05)} шт</b> дерев'яних піддонів на дренажну подушку.` : `Укладання лаг підлоги.`,
-          s.floor_finish_cm === 2 ? `Монтаж вологостійких плит OSB-3 (18–22 мм) на саморізи поверх піддонів.` : `Настил обрізної дошки підлоги.`,
-          `Встановлення <b>${s.exhaust_vents} витяжних шахт</b> (під стелею) та <b>${s.intake_vents} припливних труб</b> (біля підлоги) з протиуламковими сітками та козирками.`,
-          s.beds_count > 0 ? `Монтаж <b>${s.beds_count} блоків двоярусних ліжок NATO (2.1 × 0.8 м)</b> на ${s.beds_count * 2} спальних місць із збереженням проходу шириною <b>${s.corridor_width.toFixed(2)} м</b>.` : `Облаштування робочих зон.`
-        ]
-      }
-    ];
-
-    const container = document.getElementById('algorithm_steps_container');
-    container.innerHTML = steps.map(st => `
-      <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 14px;">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-          <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #052e16; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
-            ${st.num}
-          </div>
-          <h3 style="font-size: 1.05rem; color: #fff; margin: 0;">${st.title}</h3>
-        </div>
-        <ul style="margin-left: 24px; font-size: 0.88rem; color: var(--text-main); line-height: 1.6;">
-          ${st.details.filter(d => d !== '—').map(d => `<li>${d}</li>`).join('')}
-        </ul>
-      </div>
-    `).join('');
   }
 
   function copyAlgorithmText() {
-    const s = calcState;
-    const stepsDiv = document.getElementById('algorithm_steps_container');
-    let text = `===============================================================\n`;
-    text += `ТЕХНОЛОГІЧНА КАРТА ТА АЛГОРИТМ БУДІВНИЦТВА БЛІНДАЖА\n`;
-    text += `Об'єкт: ${s.W} × ${s.L} м, проєктна глибина ${s.pit_depth_m.toFixed(2)} м, ${s.log_layers} накати\n`;
-    text += `===============================================================\n\n`;
-
-    const blocks = stepsDiv.querySelectorAll('div[style*="background: var(--bg-input)"]');
-    blocks.forEach(b => {
-      const title = b.querySelector('h3').innerText;
-      const lis = Array.from(b.querySelectorAll('li')).map(li => "  • " + li.innerText).join('\n');
-      text += `${title}\n${lis}\n\n`;
+    let text = `ТЕХНОЛОГІЧНИЙ АЛГОРИТМ БУДІВНИЦТВА БЛІНДАЖА (СВП 3-00(51)238)\n\n`;
+    const cards = document.querySelectorAll('.step-card');
+    cards.forEach(c => {
+      text += `${c.querySelector('.step-title').innerText}\n`;
+      text += `Матеріали:\n`;
+      c.querySelectorAll('.step-material-list li').forEach(li => text += `  ${li.innerText}\n`);
+      text += `Операції:\n`;
+      c.querySelectorAll('.step-tasks-list li').forEach(li => text += `  - ${li.innerText}\n`);
+      text += `\n`;
     });
-
     navigator.clipboard.writeText(text).then(() => {
-      alert('✅ Покроковий алгоритм будівництва скопійовано в буфер обміну!');
+      alert('✅ Покроковий алгоритм спорудження скопійовано!');
     });
   }
 
-  
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+  function copyReportText() {
+    const text = document.getElementById('report_content_text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Звіт успішно скопійовано!');
     });
   }
 
