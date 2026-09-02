@@ -1,3 +1,10 @@
+<!--
+================================================================================
+© 2026 ВСІ ПРАВА ЗАХИЩЕНО. PROPRIETARY AND CONFIDENTIAL.
+Цей код є інтелектуальною власністю розробника.
+Копіювання, тиражування та розповсюдження без прямої згоди автора заборонено.
+================================================================================
+-->
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -1451,6 +1458,11 @@
         </div>
       </div>
 
+      
+      <div style="margin-top: 12px; font-size: 7pt; color: #64748b; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+        © 2026 Інтелектуальна власність розробника. Документ сформовано в системі «FortCalc Pro». Розповсюдження тільки за погодженням.
+      </div>
+
       <!-- Section 4: Sign-off block -->
       <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid #cbd5e1; page-break-inside: avoid;">
         <table style="width: 100%; font-size: 8.5pt; color: #0f172a; border-collapse: collapse;">
@@ -1991,7 +2003,7 @@
       floor_drain_cm, floor_pallets_cm, floor_finish, floor_finish_cm, floor_thick_total_m,
       roof_logs_m, roof_sandbags_m, roof_soil_m, total_roof_thick_m, pit_depth_m,
       total_roof_load_t_m2, total_roof_weight_tons,
-      support_scheme, post_step, post_diam_cm, beam_diam_cm, total_posts, total_beam_length, max_span_m, corridor_width,
+      support_scheme, post_step, post_diam_cm, beam_diam_cm, posts_per_line, total_posts, total_beam_length, max_span_m, corridor_width,
       beds_count, wall_clearance, stake_offset,
       pit_bot_w, pit_bot_l, pit_bot_diag, pit_top_w, pit_top_l, pit_top_diag,
       stakes_w, stakes_l, stakes_diag, earth_volume,
@@ -2390,6 +2402,7 @@
     const wall_posts_count = Math.ceil(wall_perimeter / 1.0);
     const beam_lines = s.support_scheme === 'asymmetric' ? 2 : (s.support_scheme === 'center' ? 1 : 0);
     const mauerlat_lines = s.W > 3.0 ? 3 : 2;
+    const posts_per_line = s.posts_per_line || (Math.ceil(s.L / s.post_step) + 1);
 
     const steps = [
       {
@@ -3144,12 +3157,56 @@
     }
   }
 
+  
+  // ==========================================
+  // ВАРІАНТ Б: ЗАХИСТ АВТОРСЬКИХ ПРАВ ТА КОДУ
+  // ==========================================
+  // Заборона виклику контекстного меню (права кнопка миші)
+  document.addEventListener('contextmenu', function(e) {
+    // Дозволяємо лише в середині полів вводу input/textarea для зручності
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // Заборона гарячих клавіш для перегляду та збереження коду (F12, Ctrl+U, Ctrl+S, Ctrl+Shift+I)
+  document.addEventListener('keydown', function(e) {
+    // F12 (DevTools)
+    if (e.key === 'F12' || e.keyCode === 123) {
+      e.preventDefault();
+      return false;
+    }
+    // Ctrl+U (View Source), Ctrl+S (Save Page), Ctrl+Shift+I/J/C (Inspect)
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      return false;
+    }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J' || e.key === 'c' || e.key === 'C')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
   window.onload = function() {
     applyAccessGate();
     initProjectMeta();
     calculateAll();
   };
 </script>
+
+
+<footer style="margin-top: 40px; padding: 20px 16px; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.78rem; color: var(--text-muted); background: #0c110d;">
+  <div style="font-weight: 700; color: #cbd5e1; margin-bottom: 4px;">
+    © 2026 Бліндаж-Калькулятор • Інженерно-саперна рота «CODE 9.2»
+  </div>
+  <div>
+    Усі права захищено. Програмний комплекс є інтелектуальною власністю розробника.
+  </div>
+  <div style="color: #ef4444; font-size: 0.72rem; margin-top: 4px;">
+    ⚠️ Копіювання, тиражування та розповсюдження вихідного коду дозволені ВИКЛЮЧНО за згодою автора.
+  </div>
+</footer>
 
 </body>
 </html>

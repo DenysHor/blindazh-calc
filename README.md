@@ -1,7 +1,7 @@
 # 🛡️ FortCalc Pro — Інженерний калькулятор фортифікаційних споруд
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-brightgreen?logo=github)](https://pages.github.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 [![Offline Ready](https://img.shields.io/badge/PWA-100%25%20Offline-blue)](manifest.json)
 
 Автономний інженерно-фортифікаційний веб-додаток (PWA) для польового розрахунку котлованів, захисних перекриттів, силових каркасів, специфікацій матеріалів (BOM) та автоматичної генерації покрокового алгоритму будівництва польових укриттів і бліндажів.
@@ -76,4 +76,4 @@
 
 ## 📄 Ліцензія
 
-Розповсюджується під ліцензією [MIT](LICENSE). Вільне використання для інженерних та оборонних потреб.
+© 2026. **Всі права захищено.** Програмний комплекс, алгоритми розрахунку та графічні матеріали є власністю розробника. Будь-яке копіювання, модифікація або розповсюдження вихідного коду дозволені **виключно за згодою автора**.
