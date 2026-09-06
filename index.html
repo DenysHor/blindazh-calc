@@ -639,6 +639,25 @@
                 </select>
               </div>
             </div>
+            <div class="form-group">
+              <label>Крок стійок / відстань між стовпами (м)</label>
+              <div class="input-wrapper">
+                <select id="post_step_select" onchange="onPostStepSelectChange()">
+                  <option value="1.0">1.0 м (під дошку 2.0 м, 3.0 м, 4.0 м)</option>
+                  <option value="1.2">1.2 м (під дошку 2.4 м, 3.6 м)</option>
+                  <option value="1.5" selected>1.5 м (стандарт Рис. 2 / під дошку 3.0 м, 4.5 м)</option>
+                  <option value="1.8">1.8 м (під дошку 3.6 м, 5.4 м)</option>
+                  <option value="2.0">2.0 м (під дошку 4.0 м, 6.0 м)</option>
+                  <option value="custom">Власна відстань (вручну)...</option>
+                </select>
+              </div>
+              <div id="post_step_custom_wrapper" class="input-wrapper" style="display:none; margin-top:6px;">
+                <input type="number" id="post_step_custom" value="1.5" step="0.1" min="0.8" max="3.5" oninput="calculateAll()" placeholder="Введіть відстань у метрах (наприклад, 1.7)">
+              </div>
+              <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">
+                Кратно довжині наявної дошки для мінімізації обрізків (1.0 м, 1.5 м, 2.0 м)
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1464,38 +1483,45 @@
 </div>
 
 <script>
-  // Service Worker for offline use
+  // Auto-clear old cache to force fresh update
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      if (window.caches) {
+        caches.keys().then(keys => {
+          keys.forEach(k => caches.delete(k));
+        });
+      }
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
+      });
     });
   }
 
   // Presets
   const presets = {
-    large_nato: {
+        large_nato: {
       width: 4.0, length: 12.0, height: 2.2, soil: 'loam',
       log_layers: '2', d1: 20, d2: 20, inter_soil: 15, sandbags: '2', soil_cover: 45,
       floor_drain: 10, floor_pallets: '14', floor_finish: 'osb',
-      support_scheme: 'asymmetric'
+      support_scheme: 'asymmetric', post_step: 1.5
     },
     squad: {
       width: 3.5, length: 6.0, height: 2.1, soil: 'loam',
       log_layers: '2', d1: 20, d2: 20, inter_soil: 15, sandbags: '2', soil_cover: 45,
       floor_drain: 10, floor_pallets: '14', floor_finish: 'board',
-      support_scheme: 'asymmetric'
+      support_scheme: 'asymmetric', post_step: 1.5
     },
     hq: {
       width: 4.0, length: 8.0, height: 2.2, soil: 'clay',
       log_layers: '2', d1: 22, d2: 22, inter_soil: 20, sandbags: '2', soil_cover: 60,
       floor_drain: 10, floor_pallets: '14', floor_finish: 'board',
-      support_scheme: 'center'
+      support_scheme: 'center', post_step: 1.5
     },
     trench: {
       width: 1.5, length: 4.0, height: 1.8, soil: 'loam',
       log_layers: '1', d1: 18, d2: 18, inter_soil: 0, sandbags: '0', soil_cover: 50,
       floor_drain: 10, floor_pallets: '0', floor_finish: 'board',
-      support_scheme: 'none'
+      support_scheme: 'none', post_step: 2.0
     }
   };
 
@@ -1571,6 +1597,7 @@
     document.getElementById('floor_pallets').value = p.floor_pallets;
     document.getElementById('floor_finish').value = p.floor_finish;
     document.getElementById('support_scheme').value = p.support_scheme;
+    if (p.post_step) setPostStepValue(p.post_step); else setPostStepValue(1.5);
 
     calculateAll();
   }
@@ -1603,6 +1630,55 @@
   }
 
   let calcState = {};
+
+  
+  // Helper for Post Spacing (крок між стовпами)
+  function getPostStepValue() {
+    const sel = document.getElementById('post_step_select');
+    if (!sel) return 1.5;
+    if (sel.value === 'custom') {
+      const cust = parseFloat(document.getElementById('post_step_custom').value);
+      return (cust && cust >= 0.5) ? cust : 1.5;
+    }
+    return parseFloat(sel.value) || 1.5;
+  }
+
+  function onPostStepSelectChange() {
+    const sel = document.getElementById('post_step_select');
+    const customWrapper = document.getElementById('post_step_custom_wrapper');
+    if (sel.value === 'custom') {
+      if (customWrapper) customWrapper.style.display = 'flex';
+    } else {
+      if (customWrapper) customWrapper.style.display = 'none';
+    }
+    calculateAll();
+  }
+
+  function setPostStepValue(val) {
+    const sel = document.getElementById('post_step_select');
+    const customWrapper = document.getElementById('post_step_custom_wrapper');
+    const custInput = document.getElementById('post_step_custom');
+    if (!sel) return;
+    const num = parseFloat(val) || 1.5;
+    const valStr = num.toFixed(1);
+    let found = false;
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === valStr || Math.abs(parseFloat(sel.options[i].value) - num) < 0.05) {
+        sel.selectedIndex = i;
+        found = true;
+        break;
+      }
+    }
+    if (found) {
+      if (customWrapper) customWrapper.style.display = 'none';
+    } else {
+      sel.value = 'custom';
+      if (customWrapper) {
+        customWrapper.style.display = 'flex';
+        if (custInput) custInput.value = num;
+      }
+    }
+  }
 
   function calculateAll() {
     const W = parseFloat(document.getElementById('dim_width').value) || 4.0;
@@ -1649,7 +1725,7 @@
 
     // Structural Supports
     const support_scheme = document.getElementById('support_scheme').value;
-    const post_step = 1.5; // standard 1.5 m
+    const post_step = getPostStepValue();
     const post_diam_cm = 20;
     const beam_diam_cm = 24;
 
@@ -2004,7 +2080,7 @@
 
     // 5. Wall posts
     const wall_perimeter = 2 * (s.W + s.L);
-    const wall_posts_count = Math.ceil(wall_perimeter / 1.0); // every 1 meter
+    const wall_posts_count = Math.ceil(wall_perimeter / s.post_step); // every 1 meter
     const wall_posts_vol = wall_posts_count * Math.PI * (0.075**2) * (s.H_int + 0.5);
 
     // TOTAL ROUND LOGS
@@ -2035,8 +2111,8 @@
     const sandbags_count = s.sandbag_layers > 0 ? Math.ceil(((s.W * s.L) / 0.15) * s.sandbag_layers) : 0;
 
     // 11. Hardware
-    const cramps_count = (s.total_posts * 4) + Math.ceil(log1_pcs * 0.8) + (beam_lines * 6) + 20;
-    const nails_200_kg = Math.ceil(s.total_posts * 0.5 + (beam_lines * 4) + (log1_pcs * 0.2) + 15);
+    const cramps_count = (s.total_posts * 4) + (wall_posts_count * 2) + Math.ceil(log1_pcs * 0.8) + (beam_lines * 6) + 20;
+    const nails_200_kg = Math.ceil((s.total_posts + wall_posts_count) * 0.4 + (beam_lines * 4) + (log1_pcs * 0.2) + 15);
     const nails_100_kg = Math.ceil(wall_area * 0.25 + (s.floor_finish === 'board' ? s.W * s.L * 0.25 : 10) + 10);
 
     // Update Quick Highlight Box
@@ -2104,7 +2180,7 @@
     const log1_pcs = Math.ceil(s.L / (s.d1_cm / 100));
     const log2_pcs = s.log_layers === 2 ? Math.ceil(s.W / (s.d2_cm / 100)) : 0;
     const wall_perimeter = 2 * (s.W + s.L);
-    const wall_posts_count = Math.ceil(wall_perimeter / 1.0);
+    const wall_posts_count = Math.ceil(wall_perimeter / s.post_step);
     const beam_lines = s.support_scheme === 'asymmetric' ? 2 : (s.support_scheme === 'center' ? 1 : 0);
     const mauerlat_lines = s.W > 3.0 ? 3 : 2;
     const posts_per_line = s.posts_per_line || (Math.ceil(s.L / s.post_step) + 1);
@@ -2162,11 +2238,11 @@
         equipment: "Мотобур шнековий (або ручний бур ∅25–30 см, глибина буріння 0.8–1.0 м), бензопили.",
         materials: [
           `Стоякові стовпи (кругляк ∅20–25 см, довжина 4.0 м): <b>${s.total_posts + wall_posts_count} шт</b>`,
-          `Крок стовпів по периметру: <b>1.5 – 1.8 м</b> (кратно довжині дошки для мінімізації обрізків)`
+          `Крок встановлення стовпів: <b>${s.post_step.toFixed(1)} м</b> (під довжину наявної дошки: ${s.post_step <= 1.1 ? "2.0 м / 3.0 м / 4.0 м" : (Math.abs(s.post_step - 1.5) < 0.15 ? "3.0 м / 4.5 м / 6.0 м" : (s.post_step >= 1.9 ? "4.0 м / 6.0 м" : "під обраний розмір дошки"))})`
         ],
         tasks: [
           `<b>Свердління отворів:</b> У дні котловану свердляться отвори глибиною 0.8–1.0 м під стоякові стовпи.`,
-          `<b>Крок розташування:</b> Стовпи розташовуються на відстані <b>1.5–1.8 метра</b> один від одного (підбирається кратно довжині дошки). Діаметр колод 20–25 см, довжина 4 метри.`,
+          `<b>Крок розташування:</b> Стовпи розташовуються на відстані <b>${s.post_step.toFixed(1)} метра</b> один від одного (підбирається кратно довжині дошки для мінімізації обрізків). У кожній поздовжній лінії виходить по <b>${posts_per_line} стійок</b>.`,
           `<b>Обов'язкова центральна стійка:</b> Якщо ширина бліндажа перевищує 3 метри, встановлення ряду центральних стійок є <b>ОБОВ'ЯЗКОВИМ</b>!`,
           `<b>Зсув під ліжка:</b> Залежно від типу ліжок (ліжка NATO 2.1м або дерев'яні нари), ряд стояків зміщується на ±20 см для забезпечення широкого проходу.`
         ],
@@ -2649,7 +2725,7 @@
         log_layers: s.log_layers, d1: s.d1_cm, d2: s.d2_cm, inter_soil: s.inter_soil_cm,
         sandbag_layers: s.sandbag_layers, soil_cover: s.soil_cover_cm,
         floor_drain: s.floor_drain_cm, floor_pallets: s.floor_pallets_cm, floor_finish: s.floor_finish,
-        support_scheme: s.support_scheme
+        support_scheme: s.support_scheme, post_step: s.post_step
       }
     };
 
@@ -2726,6 +2802,7 @@
     document.getElementById('floor_pallets').value = inp.floor_pallets;
     document.getElementById('floor_finish').value = inp.floor_finish;
     document.getElementById('support_scheme').value = inp.support_scheme;
+    if (inp.post_step) setPostStepValue(inp.post_step); else setPostStepValue(1.5);
 
     calculateAll();
     closeProjectsModal();
@@ -2800,6 +2877,7 @@
       ? 'Дворядна асиметрична (під ліжка NATO 2.1м)' 
       : (s.support_scheme === 'center' ? 'Центральний поздовжній прогін' : 'Без проміжних опор');
     document.getElementById('pdf_val_corridor').innerText = `${s.corridor_width.toFixed(2)} м`;
+    if (document.getElementById('pdf_val_post_step')) document.getElementById('pdf_val_post_step').innerText = `${s.post_step.toFixed(1)} м (по ${s.posts_per_line} стійок у лінії, всього ${s.total_posts} внутр. + ${Math.ceil(2*(s.W+s.L)/s.post_step)} стін.)`;
     document.getElementById('pdf_mach_depth').innerText = s.pit_depth_m.toFixed(2);
 
     // Populate PDF BOM Table

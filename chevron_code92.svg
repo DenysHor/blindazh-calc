@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 720" width="100%" height="100%" style="display: block; overflow: visible;">
+  <defs>
+    <!-- Digital Camouflage Pattern -->
+    <pattern id="isr_digital_camo" width="70" height="70" patternUnits="userSpaceOnUse">
+      <rect width="70" height="70" fill="#253127"/>
+      <!-- Deep charcoal blocks -->
+      <rect x="0" y="0" width="18" height="25" fill="#18211a"/>
+      <rect x="18" y="8" width="26" height="18" fill="#141c16"/>
+      <rect x="44" y="35" width="26" height="35" fill="#18211a"/>
+      <rect x="8" y="44" width="22" height="26" fill="#141c16"/>
+      <!-- Olive & foliage green blocks -->
+      <rect x="18" y="0" width="35" height="14" fill="#313f33"/>
+      <rect x="44" y="14" width="26" height="21" fill="#28352a"/>
+      <rect x="0" y="25" width="26" height="18" fill="#364538"/>
+      <rect x="30" y="25" width="22" height="22" fill="#2c392f"/>
+      <rect x="25" y="56" width="26" height="14" fill="#364538"/>
+      <!-- Brown earth blocks -->
+      <rect x="35" y="4" width="18" height="18" fill="#3c3227" opacity="0.85"/>
+      <rect x="0" y="52" width="18" height="18" fill="#3c3227" opacity="0.85"/>
+      <rect x="52" y="48" width="18" height="22" fill="#44372a" opacity="0.75"/>
+      <rect x="12" y="30" width="18" height="14" fill="#44372a" opacity="0.65"/>
+    </pattern>
+
+    <!-- Shield Clip Path (Smooth Arch, Straight Sides, Tapered Point) -->
+    <clipPath id="isr_shield_clip">
+      <path d="M 52 118 
+               C 170 78, 330 78, 448 118 
+               C 478 140, 474 315, 456 445 
+               C 432 565, 332 658, 250 706 
+               C 168 658, 68 565, 44 445 
+               C 26 315, 22 140, 52 118 Z"/>
+    </clipPath>
+
+    <!-- Metallic Gold Gradients -->
+    <linearGradient id="gold_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="15%" stop-color="#fef08a"/>
+      <stop offset="35%" stop-color="#f59e0b"/>
+      <stop offset="65%" stop-color="#d97706"/>
+      <stop offset="85%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+
+    <linearGradient id="gold_light" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <linearGradient id="gold_dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="insignia_shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#070c09" flood-opacity="0.85"/>
+    </filter>
+  </defs>
+
+  <!-- 1. CAMOUFLAGE SHIELD BACKGROUND (Clipped to shield) -->
+  <g clip-path="url(#isr_shield_clip)">
+    <rect x="0" y="0" width="500" height="720" fill="url(#isr_digital_camo)"/>
+  </g>
+
+  <!-- 2. SHIELD EMBROIDERED BORDERS (Multi-layer border) -->
+  <!-- Thick outer border -->
+  <path d="M 52 118 C 170 78, 330 78, 448 118 C 478 140, 474 315, 456 445 C 432 565, 332 658, 250 706 C 168 658, 68 565, 44 445 C 26 315, 22 140, 52 118 Z" 
+        fill="none" stroke="#161f18" stroke-width="20"/>
+  <!-- Middle tactical olive seam -->
+  <path d="M 52 118 C 170 78, 330 78, 448 118 C 478 140, 474 315, 456 445 C 432 565, 332 658, 250 706 C 168 658, 68 565, 44 445 C 26 315, 22 140, 52 118 Z" 
+        fill="none" stroke="#364739" stroke-width="9"/>
+  <!-- Inner thin seam line -->
+  <path d="M 58 124 C 172 86, 328 86, 442 124 C 468 144, 464 312, 448 440 C 426 555, 328 646, 250 692 C 172 646, 74 555, 52 440 C 36 312, 32 144, 58 124 Z" 
+        fill="none" stroke="#222c24" stroke-width="3"/>
+
+  <!-- 3. TOP ENGINEERING EMBLEM IN SHINING GOLD (Tower, Axes, Pickaxe) -->
+  <g filter="url(#insignia_shadow)">
+    <!-- CROSSED BATTLE AXES BEHIND TOWER -->
+    <!-- Left Axe (angle -42deg) -->
+    <g transform="translate(250, 235) rotate(-42)">
+      <!-- Axe shaft -->
+      <rect x="-9" y="-125" width="18" height="245" rx="4" fill="url(#gold_dark)" stroke="#381402" stroke-width="2"/>
+      <rect x="-6" y="-120" width="12" height="235" fill="url(#gold_grad)"/>
+      <!-- Axe head/blade -->
+      <path d="M -9 -85 C -48 -108, -75 -76, -80 -42 C -54 -47, -22 -47, -9 -52 Z" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5"/>
+      <path d="M -9 -83 C -38 -96, -60 -74, -66 -52 Z" fill="#fffbeb" opacity="0.65"/>
+    </g>
+
+    <!-- Right Axe (angle +42deg) -->
+    <g transform="translate(250, 235) rotate(42)">
+      <!-- Axe shaft -->
+      <rect x="-9" y="-125" width="18" height="245" rx="4" fill="url(#gold_dark)" stroke="#381402" stroke-width="2"/>
+      <rect x="-6" y="-120" width="12" height="235" fill="url(#gold_grad)"/>
+      <!-- Axe head/blade -->
+      <path d="M 9 -85 C 48 -108, 75 -76, 80 -42 C 54 -47, 22 -47, 9 -52 Z" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5"/>
+      <path d="M 9 -83 C 38 -96, 60 -74, 66 -52 Z" fill="#fffbeb" opacity="0.65"/>
+    </g>
+
+    <!-- CURVED PICKAXE / ANCHOR BOW AT BOTTOM -->
+    <path d="M 126 258 C 175 342, 325 342, 374 258 C 358 258, 338 304, 250 314 C 162 304, 142 258, 126 258 Z" 
+          fill="url(#gold_grad)" stroke="#381402" stroke-width="3"/>
+    <path d="M 136 266 C 178 326, 322 326, 364 266 C 342 295, 250 305, 136 266 Z" fill="#fffbeb" opacity="0.55"/>
+
+    <!-- FORTRESS TOWER (BASTION) -->
+    <!-- Tower Body Shadow & Outline -->
+    <rect x="194" y="145" width="112" height="152" fill="url(#gold_dark)" stroke="#381402" stroke-width="3" rx="2"/>
+    <rect x="199" y="150" width="102" height="142" fill="url(#gold_grad)"/>
+
+    <!-- Battlements (3 зубці) -->
+    <!-- Left battlement -->
+    <rect x="188" y="124" width="32" height="30" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5" rx="1"/>
+    <rect x="191" y="126" width="26" height="12" fill="#fffbeb" opacity="0.5"/>
+    <!-- Center battlement (higher) -->
+    <rect x="234" y="118" width="32" height="36" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5" rx="1"/>
+    <rect x="237" y="120" width="26" height="12" fill="#fffbeb" opacity="0.75"/>
+    <!-- Right battlement -->
+    <rect x="280" y="124" width="32" height="30" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5" rx="1"/>
+    <rect x="283" y="126" width="26" height="12" fill="#fffbeb" opacity="0.5"/>
+
+    <!-- Masonry Blocks / Mortar Lines -->
+    <g stroke="#5a2404" stroke-width="2">
+      <!-- Horizontal row lines -->
+      <line x1="199" y1="174" x2="301" y2="174"/>
+      <line x1="199" y1="198" x2="301" y2="198"/>
+      <line x1="199" y1="222" x2="301" y2="222"/>
+      <line x1="199" y1="246" x2="301" y2="246"/>
+      <line x1="199" y1="270" x2="301" y2="270"/>
+
+      <!-- Vertical brick joints -->
+      <line x1="228" y1="150" x2="228" y2="174"/>
+      <line x1="272" y1="150" x2="272" y2="174"/>
+
+      <line x1="214" y1="174" x2="214" y2="198"/>
+      <line x1="250" y1="174" x2="250" y2="198"/>
+      <line x1="286" y1="174" x2="286" y2="198"/>
+
+      <line x1="228" y1="198" x2="228" y2="222"/>
+      <line x1="272" y1="198" x2="272" y2="222"/>
+
+      <line x1="214" y1="222" x2="214" y2="246"/>
+      <line x1="250" y1="222" x2="250" y2="246"/>
+      <line x1="286" y1="222" x2="286" y2="246"/>
+
+      <line x1="228" y1="246" x2="228" y2="270"/>
+      <line x1="272" y1="246" x2="272" y2="270"/>
+    </g>
+
+    <!-- Central Vertical Ram / Pillar -->
+    <rect x="238" y="168" width="24" height="152" rx="3" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5"/>
+    <rect x="242" y="170" width="8" height="146" fill="#fffbeb" opacity="0.65"/>
+    <ellipse cx="250" cy="320" rx="18" ry="12" fill="url(#gold_grad)" stroke="#381402" stroke-width="2.5"/>
+  </g>
+
+  <!-- 4. TEXT INSIGNIA: "CODE 9.2" -->
+  <g filter="url(#insignia_shadow)">
+    <!-- "CODE" TEXT -->
+    <text x="250" y="445" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" 
+          font-size="90" 
+          font-weight="900" 
+          letter-spacing="5" 
+          text-anchor="middle" 
+          fill="#5c7c63" 
+          stroke="#18221b" 
+          stroke-width="8" 
+          paint-order="stroke fill">
+      CODE
+    </text>
+    <text x="250" y="445" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" 
+          font-size="90" 
+          font-weight="900" 
+          letter-spacing="5" 
+          text-anchor="middle" 
+          fill="#6d9075">
+      CODE
+    </text>
+
+    <!-- "9.2" TEXT -->
+    <g>
+      <text x="250" y="605" 
+            font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" 
+            font-size="165" 
+            font-weight="900" 
+            letter-spacing="8" 
+            text-anchor="middle" 
+            fill="#5c7c63" 
+            stroke="#18221b" 
+            stroke-width="12" 
+            paint-order="stroke fill">
+        9.2
+      </text>
+      <text x="250" y="605" 
+            font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" 
+            font-size="165" 
+            font-weight="900" 
+            letter-spacing="8" 
+            text-anchor="middle" 
+            fill="#6d9075">
+        9.2
+      </text>
+
+      <!-- Golden Triangle on the Dot Separator -->
+      <polygon points="225,606 265,606 265,568" fill="#f59e0b" stroke="#5a2404" stroke-width="2.5"/>
+      <polygon points="228,604 263,604 263,572" fill="#fbbf24"/>
+    </g>
+  </g>
+</svg>
